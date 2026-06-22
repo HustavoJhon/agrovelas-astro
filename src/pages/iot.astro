@@ -1,0 +1,57 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { getSession } from '../lib/auth';
+import { readSheet } from '../lib/sheets';
+
+const session = getSession(Astro.cookies);
+if (!session) return Astro.redirect('/login');
+let dispositivos: any[] = [];
+try { const raw = await readSheet('IoT_Dispositivos'); dispositivos = raw.filter(d => d.ultima_latitud && d.ultima_longitud); } catch (e: any) {}
+---
+
+<DashboardLayout title="Mapa IoT" userName={session.nombre} rol={session.rol} currentPage="iot">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div><h1 class="text-2xl font-bold text-slate-900">Mapa IoT</h1><p class="text-sm text-slate-500 mt-1">Geolocalizacion de dispositivos &middot; <span class="font-medium">{dispositivos.length} con senal activa</span></p></div>
+    <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Dispositivo</button>
+  </div>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <div class="card overflow-hidden mb-6" style="height: 450px;">
+    <div id="map" style="width: 100%; height: 100%;"></div>
+  </div>
+  <div class="card overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Dispositivo</th><th>Animal</th><th>Tipo</th><th>Codigo</th><th>Bateria</th><th>Ultima Lectura</th><th>Estado</th></tr></thead><tbody>
+    {dispositivos.length === 0 ? (
+      <tr><td colspan="7" class="text-center text-slate-400 py-8">Sin dispositivos con senal activa</td></tr>
+    ) : (
+      dispositivos.map((d: any) => {
+        const bc = parseInt(d.estado_bateria_pct)>50?'badge-success':parseInt(d.estado_bateria_pct)>20?'badge-warning':'badge-danger';
+        return (
+          <tr><td class="font-mono text-xs font-medium">{d.id_dispositivo}</td><td class="font-mono text-xs text-brand-700">{d.id_animal}</td><td><span class="badge badge-info">{d.tipo_dispositivo}</span></td><td class="text-xs">{d.codigo_dispositivo||'-'}</td><td><span class={"badge " + bc}>{d.estado_bateria_pct}%</span></td><td class="text-slate-400 text-xs">{d.fecha_ultima_lectura||'-'}</td><td class="text-xs">{d.estado}</td></tr>
+        );
+      })
+    )}
+  </tbody></table></div></div>
+
+  <div id="modalIoT" class="modal-backdrop hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl"><div><h3 class="text-lg font-bold text-slate-900">Nuevo Dispositivo IoT</h3></div><button onclick="cerrarModal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button></div>
+      <form id="iotForm" class="p-6 space-y-4">
+        <div><label class="form-label">ID del Animal *</label><input id="ioAni" class="form-input" required placeholder="ANI-00001" /></div>
+        <div><label class="form-label">Tipo de Dispositivo</label><select id="ioTip" class="form-input"><option>Collar GPS</option><option>Sensor LoRa</option><option>Caravana RFID</option></select></div>
+        <div><label class="form-label">Codigo del Dispositivo</label><input id="ioCod" class="form-input" placeholder="GPS-AL01" /></div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar</button></div>
+      </form>
+    </div>
+  </div>
+</DashboardLayout>
+
+<script type="application/json" id="iotData">{JSON.stringify(dispositivos)}</script>
+<script is:inline>
+  var dispositivos = JSON.parse(document.getElementById('iotData').textContent);
+  function initMap() { if(typeof L==='undefined'){setTimeout(initMap,500);return} var m=L.map('map').setView([-13.532,-71.967],14); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap',maxZoom:19}).addTo(m); dispositivos.forEach(function(d){L.marker([parseFloat(d.ultima_latitud),parseFloat(d.ultima_longitud)]).addTo(m).bindPopup('<b>'+d.tipo_dispositivo+'</b><br>Animal: '+d.id_animal+'<br>Bateria: '+d.estado_bateria_pct+'%')}) }
+  document.addEventListener('DOMContentLoaded',initMap);
+  function abrirModal(){document.getElementById('modalIoT').classList.remove('hidden')}
+  function cerrarModal(){document.getElementById('modalIoT').classList.add('hidden')}
+
+  document.getElementById('iotForm').addEventListener('submit',function(e){e.preventDefault();var d={id_animal:document.getElementById('ioAni').value,tipo_dispositivo:document.getElementById('ioTip').value,codigo_dispositivo:document.getElementById('ioCod').value,estado_bateria_pct:100,estado:'Activo',fecha_instalacion:new Date().toISOString().split('T')[0]};if(!d.id_animal){showToast('Ingresa el ID del animal','error');return}fetch('/api/data/IoT_Dispositivos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(function(r){return r.json()}).then(function(d){if(d.error){showToast(d.error,'error');return}cerrarModal();showToast('Dispositivo registrado','success');setTimeout(function(){location.reload()},500)}).catch(function(){showToast('Error de conexion','error')})});
+</script>

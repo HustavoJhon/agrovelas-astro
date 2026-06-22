@@ -1,0 +1,58 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { getSession } from '../lib/auth';
+import { readSheet } from '../lib/sheets';
+
+const session = getSession(Astro.cookies);
+if (!session) return Astro.redirect('/login');
+let zootecnistas: any[] = [];
+try { zootecnistas = await readSheet('Zootecnistas'); } catch (e: any) {}
+---
+
+<DashboardLayout title="Zootecnistas" userName={session.nombre} rol={session.rol} currentPage="zootecnistas">
+  <div class="mb-6"><h1 class="text-2xl font-bold text-slate-900">Zootecnistas y Veterinarios</h1><p class="text-sm text-slate-500 mt-1">Directorio de especialistas &middot; <span class="font-medium">{zootecnistas.length} registrados</span></p></div>
+  {zootecnistas.length === 0 ? (
+    <div class="card p-12 text-center"><div class="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-6"><i class="fas fa-user-md text-3xl text-slate-300"></i></div><h3 class="text-lg font-semibold text-slate-900 mb-2">Sin zootecnistas registrados</h3><p class="text-sm text-slate-500">Los especialistas apareceran aqui cuando se registren.</p></div>
+  ) : (
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {zootecnistas.map((z: any) => {
+        const stars = Array(Math.round(parseFloat(z.calificacion_promedio)||0)).fill(0);
+        return (
+          <div class="card-interactive p-6">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-14 h-14 rounded-xl grad-emerald flex items-center justify-center text-white font-bold text-lg shadow shrink-0">{(z.especialidad||'Z')[0]}</div>
+              <div class="min-w-0"><p class="font-bold text-slate-900 truncate">{z.especialidad||'Especialista'}</p><p class="text-xs text-slate-400">{z.anios_experiencia||0} a&ntilde;os de experiencia</p></div>
+            </div>
+            <div class="flex items-center gap-1 mb-3 text-xs">
+              {stars.length > 0 ? stars.map(() => <i class="fas fa-star text-amber-400 text-xs"></i>) : <span class="text-slate-300">Sin calificaciones</span>}
+              <span class="text-slate-400 ml-1">({z.numero_calificaciones||0})</span>
+            </div>
+            <div class="space-y-2 text-sm text-slate-500 mb-4">
+              <div class="flex items-center gap-2"><i class="fas fa-map-marker-alt w-4 text-brand-500 shrink-0"></i><span class="truncate">{z.zona_cobertura||'No especificada'}</span></div>
+              <div class="flex items-center gap-2"><i class="fas fa-tag w-4 text-brand-500 shrink-0"></i>S/ {z.tarifa_consulta||'0.00'} / consulta</div>
+              <div class="flex items-center gap-2"><i class="fas fa-phone w-4 text-brand-500 shrink-0"></i>{z.telefono_contacto||'No disponible'}</div>
+            </div>
+            <p class="text-xs text-slate-400 mb-4 truncate-2">{z.biografia||'Sin biografia.'}</p>
+            <button onclick={"agendarCita('" + z.id_zootecnista + "')"} class="btn btn-primary w-full btn-sm cursor-pointer"><i class="fas fa-calendar-plus text-xs"></i> Agendar Cita</button>
+          </div>
+        );
+      })}
+    </div>
+  )}
+  <div id="modalCita" class="modal-backdrop hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl"><div><h3 class="text-lg font-bold text-slate-900">Agendar Cita</h3></div><button onclick="cerrarModalCita()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button></div>
+      <form id="citaForm" class="p-6 space-y-4">
+        <input type="hidden" id="cZoo" />
+        <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Fecha *</label><input id="cFec" type="date" class="form-input" required /></div><div><label class="form-label">Hora *</label><input id="cHor" type="time" class="form-input" required /></div></div>
+        <div><label class="form-label">Motivo de la consulta *</label><textarea id="cMot" class="form-input" rows="3" required placeholder="Describe el motivo..."></textarea></div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100"><button type="button" onclick="cerrarModalCita()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-calendar-check text-xs"></i> Agendar</button></div>
+      </form>
+    </div>
+  </div>
+</DashboardLayout>
+<script is:inline>
+  function agendarCita(id){document.getElementById('cZoo').value=id;document.getElementById('modalCita').classList.remove('hidden')}
+  function cerrarModalCita(){document.getElementById('modalCita').classList.add('hidden')}
+  document.getElementById('citaForm').addEventListener('submit',function(e){e.preventDefault();var d={id_zootecnista:document.getElementById('cZoo').value,fecha:document.getElementById('cFec').value,hora:document.getElementById('cHor').value,motivo:document.getElementById('cMot').value};if(!d.fecha||!d.hora||!d.motivo){showToast('Completa todos los campos','error');return}fetch('/api/data/citas/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.json()).then(d=>{if(d.error){showToast(d.error,'error');return}showToast('Cita agendada exitosamente','success');cerrarModalCita()}).catch(function(){showToast('Error de conexion','error')})});
+</script>
