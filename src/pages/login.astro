@@ -48,7 +48,7 @@ if (session) return Astro.redirect('/dashboard');
   <div id="toast" class="toast"></div>
 </Layout>
 
-<script>
+<script is:inline>
   function showToast(m,t){var e=document.getElementById('toast');if(!e)return;e.className='toast toast-'+t;e.innerHTML=m;requestAnimationFrame(function(){e.classList.add('show')});setTimeout(function(){e.classList.remove('show')},4000)}
   document.getElementById('loginForm').addEventListener('submit',function(ev){ev.preventDefault();var l=document.getElementById('lLog').value,p=document.getElementById('lPass').value;if(!l||!p){showToast('Completa todos los campos','error');return}fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({login:l,contrasena:p})}).then(function(r){return r.json()}).then(function(d){if(d.error){showToast(d.error,'error');return}showToast('Bienvenido '+d.usuario.nombre,'success');setTimeout(function(){window.location.href='/dashboard'},400)}).catch(function(){showToast('Error de conexion','error')})});
 </script>

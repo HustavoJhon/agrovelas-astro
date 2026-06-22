@@ -35,7 +35,7 @@ if (session) return Astro.redirect('/dashboard');
   <div id="toast" class="toast"></div>
 </Layout>
 
-<script>
+<script is:inline>
   function showToast(m,t){var e=document.getElementById('toast');if(!e)return;e.className='toast toast-'+t;e.innerHTML=m;requestAnimationFrame(function(){e.classList.add('show')});setTimeout(function(){e.classList.remove('show')},4000)}
   document.getElementById('regForm').addEventListener('submit',function(ev){ev.preventDefault();var n=document.getElementById('rNom').value,l=document.getElementById('rLog').value,p=document.getElementById('rPass').value;if(!n||!l||!p){showToast('Completa todos los campos','error');return}if(p.length<6){showToast('La contrasena debe tener al menos 6 caracteres','error');return}fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre_completo:n,correo:l,usuario_login:l,contrasena:p})}).then(function(r){return r.json()}).then(function(d){if(d.error){showToast(d.error,'error');return}showToast('Cuenta creada exitosamente','success');setTimeout(function(){window.location.href='/login'},600)}).catch(function(){showToast('Error de conexion','error')})});
 </script>
