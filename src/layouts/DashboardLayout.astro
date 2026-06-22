@@ -1,0 +1,28 @@
+---
+import Layout from './Layout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Header from '../components/Header.astro';
+import Toast from '../components/Toast.astro';
+
+interface Props {
+  title: string;
+  userName: string;
+  rol: string;
+  currentPage: string;
+}
+
+const { title, userName, rol, currentPage } = Astro.props;
+---
+
+<Layout title={`${title} - AGROVELAS`}>
+  <Toast />
+  <div class="flex min-h-screen bg-surface">
+    <Sidebar rol={rol} currentPage={currentPage} />
+    <div class="flex-1 flex flex-col min-w-0 lg:ml-64">
+      <Header userName={userName} pageTitle={title} />
+      <main class="flex-1 p-4 sm:p-6 lg:p-8">
+        <slot />
+      </main>
+    </div>
+  </div>
+</Layout>
