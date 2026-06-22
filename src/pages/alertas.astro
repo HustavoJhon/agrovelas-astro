@@ -1,0 +1,47 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { getSession } from '../lib/auth';
+import { readSheet } from '../lib/sheets';
+
+const session = getSession(Astro.cookies);
+if (!session) return Astro.redirect('/login');
+let alertas: any[] = [];
+try { alertas = await readSheet('Animales_Alerta'); } catch (e: any) {}
+const activas = alertas.filter(a => a.estado === 'En seguimiento' || a.estado === 'Derivado').length;
+---
+
+<DashboardLayout title="Alertas" userName={session.nombre} rol={session.rol} currentPage="alertas">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div><h1 class="text-2xl font-bold text-slate-900">Alertas Sanitarias</h1><p class="text-sm text-slate-500 mt-1">Animales bajo seguimiento &middot; <span class="font-medium text-rose-600">{activas} activas</span></p></div>
+    <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nueva Alerta</button>
+  </div>
+  {alertas.length === 0 ? (
+    <div class="card p-12 text-center"><div class="w-20 h-20 rounded-2xl bg-brand-100 flex items-center justify-center mx-auto mb-6"><i class="fas fa-check-circle text-3xl text-brand-400"></i></div><h3 class="text-lg font-semibold text-slate-900 mb-2">Sin alertas activas</h3><p class="text-sm text-slate-500">Todos los animales estan en buen estado.</p></div>
+  ) : (
+    <div class="card overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Fecha</th><th>Animal</th><th>Sintomas</th><th>Urgencia</th><th>Zootecnista</th><th>Veterinario</th><th>Estado</th></tr></thead><tbody>
+      {alertas.map((a: any) => {
+        const uc = a.nivel_urgencia==='Critica'||a.nivel_urgencia==='Alta'?'badge-danger':a.nivel_urgencia==='Media'?'badge-warning':'badge-info';
+        const ec = a.estado==='En seguimiento'?'badge-warning':a.estado==='Resuelto'?'badge-success':'badge-neutral';
+        return (
+          <tr><td class="text-slate-400 text-xs">{a.fecha_reporte||'-'}</td><td class="font-mono text-xs font-medium text-brand-700">{a.id_animal}</td><td class="max-w-[200px] truncate text-xs">{(a.sintomas||'').substring(0,80)}</td><td><span class={"badge " + uc}>{a.nivel_urgencia}</span></td><td class="text-xs">{a.zootecnista_asignado||'-'}</td><td class="text-xs">{a.veterinario_asignado||'-'}</td><td><span class={"badge " + ec}>{a.estado}</span></td></tr>
+        );
+      })}
+    </tbody></table></div></div>
+  )}
+  <div id="modalAle" class="modal-backdrop hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl"><div><h3 class="text-lg font-bold text-slate-900">Nueva Alerta Sanitaria</h3></div><button onclick="cerrarModal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button></div>
+      <form id="aleForm" class="p-6 space-y-4">
+        <div><label class="form-label">ID del Animal *</label><input id="alAni" class="form-input" required placeholder="ANI-00001" /></div>
+        <div><label class="form-label">Sintomas observados *</label><textarea id="alSin" class="form-input" rows="3" required placeholder="Describe los sintomas..."></textarea></div>
+        <div><label class="form-label">Nivel de Urgencia</label><select id="alUrg" class="form-input"><option>Baja</option><option>Media</option><option>Alta</option><option>Critica</option></select></div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar Alerta</button></div>
+      </form>
+    </div>
+  </div>
+</DashboardLayout>
+<script is:inline>
+  function abrirModal() { document.getElementById('modalAle').classList.remove('hidden'); }
+  function cerrarModal() { document.getElementById('modalAle').classList.add('hidden'); }
+  document.getElementById('aleForm').addEventListener('submit', function(e) { e.preventDefault(); var d = { id_animal: document.getElementById('alAni').value, sintomas: document.getElementById('alSin').value, nivel_urgencia: document.getElementById('alUrg').value, estado: 'En seguimiento', fecha_reporte: new Date().toISOString().replace('T',' ').substring(0,16) }; if (!d.id_animal || !d.sintomas) { showToast('Completa los campos', 'error'); return; }     fetch('/api/data/Animales_Alerta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) }).then(r=>r.json()).then(d=>{ if(d.error){showToast(d.error,'error');return;} cerrarModal(); showToast('Alerta registrada','success'); setTimeout(function(){location.reload();},500); }).catch(function(){ showToast('Error de conexion','error'); }); });
+</script>

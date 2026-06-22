@@ -1,0 +1,45 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { getSession } from '../lib/auth';
+import { readSheet } from '../lib/sheets';
+
+const session = getSession(Astro.cookies);
+if (!session) return Astro.redirect('/login');
+let registros: any[] = [];
+try { registros = await readSheet('Esquila'); } catch (e: any) {}
+let totalIngresos = 0;
+registros.forEach(e => totalIngresos += isNaN(parseFloat(e.ingreso_total)) ? 0 : parseFloat(e.ingreso_total));
+---
+
+<DashboardLayout title="Esquila" userName={session.nombre} rol={session.rol} currentPage="esquila">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div><h1 class="text-2xl font-bold text-slate-900">Esquila</h1><p class="text-sm text-slate-500 mt-1">Registro de esquila (alpacas, llamas, ovejas) &middot; <span class="font-medium">S/ {totalIngresos.toFixed(2)} ingreso total</span></p></div>
+    <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nueva Esquila</button>
+  </div>
+  {registros.length === 0 ? (
+    <div class="card p-12 text-center"><div class="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-6"><i class="fas fa-cut text-3xl text-slate-300"></i></div><h3 class="text-lg font-semibold text-slate-900 mb-2">Sin registros de esquila</h3><p class="text-sm text-slate-500 mb-6">Registra el peso, calidad y venta de fibra de tus animales.</p><button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nueva esquila</button></div>
+  ) : (
+    <div class="card overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Fecha</th><th>Animal</th><th>Peso Vellon</th><th>Categoria</th><th>Micronaje</th><th>Precio/kg</th><th>Comprador</th><th>Ingreso Total</th></tr></thead><tbody>
+      {registros.map((e: any) => (
+        <tr><td class="text-slate-400">{e.fecha_esquila||'-'}</td><td class="font-mono text-xs font-medium text-brand-700">{e.id_animal}</td><td>{e.peso_vellon_kg||'-'} kg</td><td><span class="badge badge-info">{e.categoria_fibra||'-'}</span></td><td class="text-xs">{e.micronaje_um||'-'} um</td><td class="text-xs">S/ {e.precio_por_kg||'0.00'}</td><td class="text-xs text-slate-400">{e.comprador||'-'}</td><td class="font-semibold text-brand-700">S/ {e.ingreso_total||'0.00'}</td></tr>
+      ))}
+    </tbody></table></div></div>
+  )}
+  <div id="modalEsq" class="modal-backdrop hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl"><div><h3 class="text-lg font-bold text-slate-900">Nueva Esquila</h3></div><button onclick="cerrarModal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button></div>
+      <form id="esqForm" class="p-6 space-y-4">
+        <div><label class="form-label">ID del Animal *</label><input id="eAni" class="form-input" required placeholder="ANI-00001" /></div>
+        <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Fecha *</label><input id="eFec" type="date" class="form-input" required /></div><div><label class="form-label">Peso del vellon (kg)</label><input id="ePeso" type="number" step="0.01" class="form-input" placeholder="1.85" /></div></div>
+        <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Precio por kg S/</label><input id="ePre" type="number" step="0.01" class="form-input" placeholder="18.50" /></div><div><label class="form-label">Comprador</label><input id="eComp" class="form-input" placeholder="Acopiadora Sur SAC" /></div></div>
+        <div><label class="form-label">Categoria de Fibra</label><input id="eCat" class="form-input" placeholder="Baby, Fleece, Medium..." /></div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar</button></div>
+      </form>
+    </div>
+  </div>
+</DashboardLayout>
+<script is:inline>
+  function abrirModal() { document.getElementById('modalEsq').classList.remove('hidden'); }
+  function cerrarModal() { document.getElementById('modalEsq').classList.add('hidden'); }
+  document.getElementById('esqForm').addEventListener('submit', function(e) { e.preventDefault(); var p=parseFloat(document.getElementById('ePeso').value)||0,pr=parseFloat(document.getElementById('ePre').value)||0; var d={id_animal:document.getElementById('eAni').value,fecha_esquila:document.getElementById('eFec').value,peso_vellon_kg:p,precio_por_kg:pr,ingreso_total:(p*pr).toFixed(2),comprador:document.getElementById('eComp').value,categoria_fibra:document.getElementById('eCat').value}; if(!d.id_animal||!d.fecha_esquila){showToast('Completa los campos','error');return;}     fetch('/api/data/Esquila',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.json()).then(d=>{if(d.error){showToast(d.error,'error');return;}cerrarModal();showToast('Esquila registrada - S/'+d.ingreso_total,'success');setTimeout(function(){location.reload();},500);}).catch(function(){showToast('Error de conexion','error');}); });
+</script>
