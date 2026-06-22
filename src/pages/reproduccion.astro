@@ -1,0 +1,46 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { getSession } from '../lib/auth';
+import { readSheet } from '../lib/sheets';
+
+const session = getSession(Astro.cookies);
+if (!session) return Astro.redirect('/login');
+let registros: any[] = [];
+try { registros = await readSheet('Reproduccion'); } catch (e: any) {}
+---
+
+<DashboardLayout title="Reproduccion" userName={session.nombre} rol={session.rol} currentPage="reproduccion">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div><h1 class="text-2xl font-bold text-slate-900">Reproduccion</h1><p class="text-sm text-slate-500 mt-1">Control reproductivo &middot; <span class="font-medium">{registros.length} eventos</span></p></div>
+    <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Evento</button>
+  </div>
+  {registros.length === 0 ? (
+    <div class="card p-12 text-center"><div class="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-6"><i class="fas fa-dna text-3xl text-slate-300"></i></div><h3 class="text-lg font-semibold text-slate-900 mb-2">Sin registros reproductivos</h3><p class="text-sm text-slate-500 mb-6">Registra empadres, gestaciones y partos de tu ganado.</p><button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo evento</button></div>
+  ) : (
+    <div class="card overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Fecha</th><th>Hembra</th><th>Evento</th><th>Resultado</th><th>Macho</th><th>Parto Probable</th></tr></thead><tbody>
+      {registros.map((r: any) => {
+        const rc = r.resultado==='Positivo'?'badge-success':r.resultado==='Negativo'?'badge-danger':'badge-warning';
+        return (
+          <tr><td class="text-slate-400">{r.fecha_evento||'-'}</td><td class="font-mono text-xs font-medium text-brand-700">{r.id_animal_hembra}</td><td>{r.tipo_evento||'-'}</td><td><span class={"badge " + rc}>{r.resultado}</span></td><td class="font-mono text-xs">{r.id_macho||'-'}</td><td class="text-slate-400 text-xs">{r.fecha_probable_parto||'-'}</td></tr>
+        );
+      })}
+    </tbody></table></div></div>
+  )}
+  <div id="modalRep" class="modal-backdrop hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl"><div><h3 class="text-lg font-bold text-slate-900">Nuevo Evento Reproductivo</h3></div><button onclick="cerrarModal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button></div>
+      <form id="repForm" class="p-6 space-y-4">
+        <div><label class="form-label">ID de la Hembra *</label><input id="rHem" class="form-input" required placeholder="ANI-00001" /></div>
+        <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Fecha *</label><input id="rFec" type="date" class="form-input" required /></div><div><label class="form-label">Tipo</label><select id="rTip" class="form-input"><option>Empadre/Monta</option><option>Inseminacion artificial</option><option>Diagnostico de gestacion</option><option>Parto</option><option>Aborto</option><option>Destete</option></select></div></div>
+        <div><label class="form-label">ID del Macho</label><input id="rMac" class="form-input" placeholder="ANI-00002" /></div>
+        <div><label class="form-label">Resultado</label><select id="rRes" class="form-input"><option>Pendiente</option><option>Positivo</option><option>Negativo</option></select></div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar</button></div>
+      </form>
+    </div>
+  </div>
+</DashboardLayout>
+<script is:inline>
+  function abrirModal() { document.getElementById('modalRep').classList.remove('hidden'); }
+  function cerrarModal() { document.getElementById('modalRep').classList.add('hidden'); }
+  document.getElementById('repForm').addEventListener('submit', function(e) { e.preventDefault(); var d = { id_animal_hembra: document.getElementById('rHem').value, tipo_evento: document.getElementById('rTip').value, fecha_evento: document.getElementById('rFec').value, id_macho: document.getElementById('rMac').value, resultado: document.getElementById('rRes').value }; if (!d.id_animal_hembra || !d.fecha_evento) { showToast('Completa los campos', 'error'); return; }     fetch('/api/data/Reproduccion', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) }).then(function(r){ return r.json(); }).then(function(d){ if(d.error){showToast(d.error,'error');return;} cerrarModal(); showToast('Evento guardado','success'); setTimeout(function(){location.reload();},500); }).catch(function(){ showToast('Error de conexion','error'); }); });
+</script>
