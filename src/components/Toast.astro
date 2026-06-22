@@ -1,0 +1,12 @@
+<div id="toast" class="toast"></div>
+
+<script is:inline>
+  function showToast(msg, tipo) {
+    var t = document.getElementById('toast');
+    if (!t) return;
+    t.className = 'toast toast-' + tipo;
+    t.innerHTML = msg;
+    requestAnimationFrame(function() { t.classList.add('show'); });
+    setTimeout(function() { t.classList.remove('show'); }, 4000);
+  }
+</script>
