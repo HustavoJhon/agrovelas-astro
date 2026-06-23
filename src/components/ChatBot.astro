@@ -1,0 +1,99 @@
+<div id="chatbot">
+  <button id="chatToggle" class="chat-toggle" onclick="toggleChat()">
+    <i class="fas fa-comment-dots"></i>
+  </button>
+  <div id="chatWindow" class="chat-window">
+    <div class="chat-header">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center"><i class="fas fa-robot text-sm"></i></div>
+        <div><p class="font-semibold text-sm">Asistente AGROVELAS</p><p class="text-xs text-white/60">En linea</p></div>
+      </div>
+      <button onclick="toggleChat()" class="text-white/60 hover:text-white transition-colors text-sm"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="chatMessages" class="chat-messages">
+      <div class="chat-msg bot">
+        <div class="chat-bubble bot">Hola! Soy el asistente de AGROVELAS. Puedo ayudarte con:<br><br>
+          <span class="chat-quick" onclick="sendQuick('Que modulo tiene el sistema?')">📋 Modulos del sistema</span><br>
+          <span class="chat-quick" onclick="sendQuick('Como registro un animal?')">🐾 Registrar un animal</span><br>
+          <span class="chat-quick" onclick="sendQuick('Que es el mapa IoT?')">📍 Mapa IoT</span><br>
+          <span class="chat-quick" onclick="sendQuick('Como agendo una cita con zootecnista?')">📅 Agendar cita</span>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-wrap">
+      <input id="chatInput" class="chat-input" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter')sendMsg()" />
+      <button onclick="sendMsg()" class="chat-send"><i class="fas fa-paper-plane text-xs"></i></button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  var chatOpen = false;
+
+  function toggleChat() {
+    chatOpen = !chatOpen;
+    document.getElementById('chatWindow').classList.toggle('open');
+    document.getElementById('chatToggle').classList.toggle('hidden');
+    if (chatOpen) setTimeout(function() { document.getElementById('chatInput').focus(); }, 300);
+  }
+
+  function sendQuick(msg) {
+    document.getElementById('chatInput').value = msg;
+    sendMsg();
+  }
+
+  var respuestas = {
+    'modulo': 'AGROVELAS tiene <b>22 modulos</b> integrados:<br><br>🐾 <b>Animales</b> - Registro y trazabilidad<br>💉 <b>Sanidad</b> - Vacunas y tratamientos<br>🧬 <b>Reproduccion</b> - Control reproductivo<br>✂️ <b>Esquila</b> - Gestion de fibra<br>💰 <b>Contabilidad</b> - Finanzas del predio<br>🚨 <b>Alertas</b> - Seguimiento sanitario<br>👨‍⚕️ <b>Zootecnistas</b> - Directorio de especialistas<br>📍 <b>Mapa IoT</b> - Geolocalizacion GPS<br><br>Navega por el menu lateral para explorarlos.',
+    'animal': 'Para registrar un animal:<br><br>1. Ve a <b>Animales</b> en el menu lateral<br>2. Haz click en <b>Nuevo Animal</b><br>3. Completa los campos (especie, sexo, raza, etc.)<br>4. Haz click en <b>Guardar</b><br><br>El sistema generara automaticamente un ID unico y un codigo QR para el animal.',
+    'iot': 'El <b>Mapa IoT</b> muestra la ubicacion en tiempo real de tus animales mediante collares GPS y sensores LoRa.<br><br>🔵 Cada punto en el mapa representa un dispositivo<br>🟢 Los colores indican la especie<br>🔋 Puedes ver el nivel de bateria de cada dispositivo<br><br>Accede desde el menu lateral en <b>Herramientas > Mapa IoT</b>.',
+    'cita': 'Para agendar una cita con un zootecnista:<br><br>1. Ve a <b>Zootecnistas</b> en el menu lateral<br>2. Busca al especialista que necesites<br>3. Haz click en <b>Agendar Cita</b><br>4. Selecciona fecha, hora y describe el motivo<br>5. Confirma la cita<br><br>Recibiras una notificacion cuando el especialista confirme.',
+    'sanidad': 'El modulo de <b>Sanidad</b> te permite:<br><br>💉 Registrar vacunaciones<br>🪱 Control de desparasitaciones<br>🏥 Tratamientos y diagnosticos<br>📅 Programar proximas aplicaciones<br>🚨 Generar alertas sanitarias<br><br>Todos los registros quedan vinculados al historial de cada animal.',
+    'reproduccion': 'El modulo de <b>Reproduccion</b> controla:<br><br>🤝 Empadre y monta natural<br>🔬 Inseminacion artificial<br>🤰 Diagnostico de gestacion<br>👶 Partos y nacimientos<br>🍼 Destete<br><br>Calcula automaticamente las fechas probables de parto segun la especie.',
+    'contabilidad': 'El modulo de <b>Contabilidad</b> registra:<br><br>💰 Ingresos (venta de fibra, animales, etc.)<br>📉 Egresos (insumos, servicios, mantenimiento)<br>📊 Balance general<br>📎 Comprobantes vinculados<br><br>Los movimientos se pueden asociar a animales o registros de esquila.',
+    'esquila': 'El modulo de <b>Esquila</b> gestiona:<br><br>✂️ Peso del vellon por animal<br>🏷️ Categoria de fibra (Baby, Fleece, etc.)<br>📏 Micronaje y calidad<br>💰 Precio por kg e ingreso total<br>👥 Compradores y destinos<br><br>Ideal para productores de alpacas y llamas.',
+    'default': 'No tengo una respuesta para esa pregunta. Estas son algunas opciones:<br><br><span class="chat-quick" onclick="sendQuick(\'Que modulo tiene el sistema?\')">📋 Modulos del sistema</span><br><span class="chat-quick" onclick="sendQuick(\'Como registro un animal?\')">🐾 Registrar un animal</span><br><span class="chat-quick" onclick="sendQuick(\'Que es el mapa IoT?\')">📍 Mapa IoT</span><br><span class="chat-quick" onclick="sendQuick(\'Como funciona sanidad?\')">💉 Modulo Sanidad</span><br><span class="chat-quick" onclick="sendQuick(\'Como funciona contabilidad?\')">💰 Modulo Contabilidad</span>'
+  };
+
+  function buscarRespuesta(msg) {
+    var m = msg.toLowerCase();
+    if (m.indexOf('modulo') > -1 || m.indexOf('sistema') > -1 || m.indexOf('funcionalidade') > -1) return 'modulo';
+    if (m.indexOf('animal') > -1 && (m.indexOf('registr') > -1 || m.indexOf('nuevo') > -1 || m.indexOf('crear') > -1 || m.indexOf('agregar') > -1)) return 'animal';
+    if (m.indexOf('iot') > -1 || m.indexOf('mapa') > -1 || m.indexOf('gps') > -1 || m.indexOf('ubicacion') > -1 || m.indexOf('localiz') > -1) return 'iot';
+    if (m.indexOf('cita') > -1 || m.indexOf('agendar') > -1 || m.indexOf('zootecnista') > -1 || m.indexOf('especialista') > -1) return 'cita';
+    if (m.indexOf('sanidad') > -1 || m.indexOf('vacuna') > -1 || m.indexOf('desparasit') > -1 || m.indexOf('tratamiento') > -1 || m.indexOf('veterin') > -1) return 'sanidad';
+    if (m.indexOf('repro') > -1 || m.indexOf('empadre') > -1 || m.indexOf('gestacion') > -1 || m.indexOf('parto') > -1 || m.indexOf('cria') > -1) return 'reproduccion';
+    if (m.indexOf('contab') > -1 || m.indexOf('ingreso') > -1 || m.indexOf('egreso') > -1 || m.indexOf('finanza') > -1 || m.indexOf('balance') > -1 || m.indexOf('dinero') > -1) return 'contabilidad';
+    if (m.indexOf('esquila') > -1 || m.indexOf('fibra') > -1 || m.indexOf('vellon') > -1 || m.indexOf('micronaje') > -1) return 'esquila';
+    return 'default';
+  }
+
+  function sendMsg() {
+    var input = document.getElementById('chatInput');
+    var msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+
+    var msgs = document.getElementById('chatMessages');
+    var userDiv = document.createElement('div');
+    userDiv.className = 'chat-msg user';
+    userDiv.innerHTML = '<div class="chat-bubble user">' + escapeHTML(msg) + '</div>';
+    msgs.appendChild(userDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    var key = buscarRespuesta(msg);
+    var reply = respuestas[key] || respuestas['default'];
+    var delay = 600 + Math.random() * 400;
+
+    setTimeout(function() {
+      var botDiv = document.createElement('div');
+      botDiv.className = 'chat-msg bot';
+      botDiv.innerHTML = '<div class="chat-bubble bot">' + reply + '</div>';
+      msgs.appendChild(botDiv);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, delay);
+  }
+
+  function escapeHTML(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
