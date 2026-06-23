@@ -227,7 +227,7 @@ const totalActs = (data?.actividades || []).length;
 
     var c1 = document.getElementById('chartAnimals');
     if (c1 && especies.length > 0) {
-      new Chart(c1, {
+      new Chart(c1 as HTMLCanvasElement, {
         type: 'bar',
         data: { labels: especies, datasets: [{ data: cuentas, backgroundColor: colors.slice(0, especies.length), borderRadius: 8, borderSkipped: false }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false }, ticks: { font: { family: 'Inter, system-ui, sans-serif', size: 11 } } } } }
@@ -236,7 +236,7 @@ const totalActs = (data?.actividades || []).length;
 
     var c2 = document.getElementById('chartFinance');
     if (c2 && (ingresos > 0 || egresos > 0)) {
-      new Chart(c2, {
+      new Chart(c2 as HTMLCanvasElement, {
         type: 'doughnut',
         data: { labels: ['Ingresos','Egresos'], datasets: [{ data: [ingresos, egresos], backgroundColor: ['#059669','#ef4444'], borderWidth: 0 }] },
         options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10, font: { family: 'Inter, system-ui, sans-serif', size: 12 } } } } }
