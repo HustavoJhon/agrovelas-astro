@@ -11,10 +11,17 @@ let errorMsg = '';
 try { data = await getDashboardData(); } catch (e: any) { errorMsg = e.message; }
 
 let ingresos = 0, egresos = 0;
+const finanzasMeses: Record<string, { ing: number; egr: number }> = {};
 if (data?.contabilidad) {
   data.contabilidad.forEach((m: any) => {
     const mon = isNaN(parseFloat(m.monto)) ? 0 : parseFloat(m.monto);
     if (m.tipo === 'Ingreso') ingresos += mon; else egresos += mon;
+    const mes = (m.fecha || '').substring(0, 7);
+    if (mes) {
+      if (!finanzasMeses[mes]) finanzasMeses[mes] = { ing: 0, egr: 0 };
+      if (m.tipo === 'Ingreso') finanzasMeses[mes].ing += mon;
+      else finanzasMeses[mes].egr += mon;
+    }
   });
 }
 
@@ -22,12 +29,18 @@ const agrup: Record<string, number> = {};
 if (data?.animales) data.animales.forEach((a: any) => { agrup[a.especie] = (agrup[a.especie]||0)+1; });
 const especies = Object.keys(agrup);
 const cuentas = Object.values(agrup);
+
+const mesesLabels = Object.keys(finanzasMeses).sort();
+const finIngresos = mesesLabels.map((m) => finanzasMeses[m].ing);
+const finEgresos = mesesLabels.map((m) => finanzasMeses[m].egr);
+
 const balancePos = (ingresos - egresos) >= 0;
 const balance = (ingresos - egresos).toFixed(0);
 const tieneNotifs = (data?.notificaciones || []).length > 0;
 const tieneActividades = (data?.actividades || []).length > 0;
 const tieneChart = especies.length > 0;
 const tieneFinanzas = ingresos > 0 || egresos > 0;
+const tieneFinMeses = mesesLabels.length > 0;
 const totalAnimales = data?.totalAnimales || 0;
 const totalAlertas = data?.alertas || 0;
 const totalZoo = (data?.zootecnistas || []).length;
@@ -112,7 +125,7 @@ const totalActs = (data?.actividades || []).length;
           <div class="chart-card-header">
             <div>
               <h3>Estado Financiero</h3>
-              <p>Ingresos vs Egresos</p>
+              <p>{tieneFinMeses ? 'Movimientos por mes' : 'Ingresos vs Egresos'}</p>
             </div>
             {tieneFinanzas ? <span class="badge-modern neutral">S/ {balance}</span> : ''}
           </div>
@@ -121,7 +134,7 @@ const totalActs = (data?.actividades || []).length;
               <div class="chart-container"><canvas id="chartFinance"></canvas></div>
             ) : (
               <div class="empty-chart">
-                <div class="empty-icon"><i class="fas fa-chart-pie"></i></div>
+                <div class="empty-icon"><i class="fas fa-chart-bar"></i></div>
                 <p class="empty-title">Sin movimientos financieros</p>
                 <p class="empty-desc">Agrega ingresos o egresos en la seccion de Contabilidad.</p>
                 <a href="/contabilidad" class="btn btn-primary btn-sm no-underline"><i class="fas fa-plus text-xs"></i> Ir a Contabilidad</a>
@@ -211,6 +224,9 @@ const totalActs = (data?.actividades || []).length;
     var cuentas = [];
     var ingresos = 0;
     var egresos = 0;
+    var mesesLabels: string[] = [];
+    var finIngresos: number[] = [];
+    var finEgresos: number[] = [];
 
     try {
       var el = document.getElementById('chartData');
@@ -220,6 +236,9 @@ const totalActs = (data?.actividades || []).length;
         cuentas = d.cuentas || [];
         ingresos = d.ingresos || 0;
         egresos = d.egresos || 0;
+        mesesLabels = d.mesesLabels || [];
+        finIngresos = d.finIngresos || [];
+        finEgresos = d.finEgresos || [];
       }
     } catch(e) {}
 
@@ -236,13 +255,30 @@ const totalActs = (data?.actividades || []).length;
 
     var c2 = document.getElementById('chartFinance');
     if (c2 && (ingresos > 0 || egresos > 0)) {
-      new Chart(c2 as HTMLCanvasElement, {
-        type: 'doughnut',
-        data: { labels: ['Ingresos','Egresos'], datasets: [{ data: [ingresos, egresos], backgroundColor: ['#059669','#ef4444'], borderWidth: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10, font: { family: 'Inter, system-ui, sans-serif', size: 12 } } } } }
-      });
+      if (mesesLabels.length > 0) {
+        new Chart(c2 as HTMLCanvasElement, {
+          type: 'bar',
+          data: {
+            labels: mesesLabels,
+            datasets: [
+              { label: 'Ingresos', data: finIngresos, backgroundColor: '#059669', borderRadius: 6, borderSkipped: false },
+              { label: 'Egresos', data: finEgresos, backgroundColor: '#ef4444', borderRadius: 6, borderSkipped: false },
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyleWidth: 10, font: { family: 'Inter, system-ui, sans-serif', size: 11 } } } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false }, ticks: { font: { family: 'Inter, system-ui, sans-serif', size: 10 } } } } }
+        });
+      } else {
+        new Chart(c2 as HTMLCanvasElement, {
+          type: 'bar',
+          data: {
+            labels: ['Ingresos','Egresos'],
+            datasets: [{ data: [ingresos, egresos], backgroundColor: ['#059669','#ef4444'], borderRadius: 8, borderSkipped: false }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false }, ticks: { font: { family: 'Inter, system-ui, sans-serif', size: 11 } } } } }
+        });
+      }
     }
   }
 </script>
 
-<script type="application/json" id="chartData">{JSON.stringify({ especies, cuentas, ingresos, egresos })}</script>
+<script type="application/json" id="chartData">{JSON.stringify({ especies, cuentas, ingresos, egresos, mesesLabels, finIngresos, finEgresos })}</script>
