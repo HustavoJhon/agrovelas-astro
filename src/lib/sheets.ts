@@ -1,47 +1,70 @@
 import { google } from 'googleapis';
-import fs from 'node:fs';
-import path from 'node:path';
-import 'dotenv/config';
 import { sha256 } from './utils';
 
-function loadCredentials() {
-  const envCreds = process.env.GOOGLE_CREDENTIALS_JSON;
-  if (envCreds) {
-    return JSON.parse(Buffer.from(envCreds, 'base64').toString('utf-8'));
+/* ============================================================
+   AUTH: Solo variables de entorno (compatible con Vercel)
+   GOOGLE_CLIENT_EMAIL  — client_email de la service account
+   GOOGLE_PRIVATE_KEY   — private_key de la service account
+   GOOGLE_SHEET_ID      — ID del spreadsheet
+   ============================================================ */
+
+function validateEnv(): void {
+  const missing: string[] = [];
+  if (!process.env.GOOGLE_CLIENT_EMAIL) missing.push('GOOGLE_CLIENT_EMAIL');
+  if (!process.env.GOOGLE_PRIVATE_KEY) missing.push('GOOGLE_PRIVATE_KEY');
+  if (!process.env.GOOGLE_SHEET_ID) missing.push('GOOGLE_SHEET_ID');
+
+  if (missing.length > 0) {
+    const msg = `[AGROVELAS] Faltan variables de entorno: ${missing.join(', ')}. ` +
+      'Configuralas en Vercel (Settings > Environment Variables) o en .env para desarrollo local.';
+    console.error(msg);
+    throw new Error(msg);
   }
-  const credsPath = path.resolve(process.cwd(), 'google-credentials.json');
-  if (!fs.existsSync(credsPath)) {
-    throw new Error(
-      'google-credentials.json no encontrado. Sigue la guia en CONEXION.md para crearlo.'
-    );
+
+  console.log('[AGROVELAS] Variables de entorno validadas correctamente.');
+  console.log(`[AGROVELAS] GOOGLE_CLIENT_EMAIL: ${process.env.GOOGLE_CLIENT_EMAIL}`);
+  console.log(`[AGROVELAS] GOOGLE_SHEET_ID: ${process.env.GOOGLE_SHEET_ID?.substring(0, 10)}...`);
+  console.log(`[AGROVELAS] GOOGLE_PRIVATE_KEY ${process.env.GOOGLE_PRIVATE_KEY ? 'presente' : 'ausente'} (${(process.env.GOOGLE_PRIVATE_KEY?.length || 0)} chars)`);
+}
+
+let authInitialized = false;
+let sheetsClient: any = null;
+
+async function getSheet(): Promise<any> {
+  if (sheetsClient) return sheetsClient;
+
+  if (!authInitialized) {
+    validateEnv();
+    authInitialized = true;
   }
-  const raw = fs.readFileSync(credsPath, 'utf-8');
-  return JSON.parse(raw);
+
+  const privateKey = (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+
+  const auth = new google.auth.JWT({
+    email: process.env.GOOGLE_CLIENT_EMAIL!,
+    key: privateKey,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+  try {
+    await auth.authorize();
+    console.log('[AGROVELAS] Autenticacion JWT con Google Sheets exitosa.');
+  } catch (err: any) {
+    console.error('[AGROVELAS] Error de autenticacion JWT:', err.message);
+    throw new Error(`Error de autenticacion con Google Sheets: ${err.message}`);
+  }
+
+  sheetsClient = google.sheets({ version: 'v4', auth });
+  return sheetsClient;
 }
 
 function getSheetId(): string {
-  const id = process.env.GOOGLE_SHEET_ID;
-  if (!id) {
-    throw new Error(
-      'GOOGLE_SHEET_ID no definido. Agregalo en .env (ej: GOOGLE_SHEET_ID=1AbCd...). Copia el ID desde la URL de tu Google Sheet.'
-    );
-  }
-  return id;
+  return process.env.GOOGLE_SHEET_ID!;
 }
 
-function getAuth() {
-  const creds = loadCredentials();
-  return new google.auth.GoogleAuth({
-    credentials: creds,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
-}
-
-async function getSheet(): Promise<any> {
-  const auth = getAuth();
-  const sheets = google.sheets({ version: 'v4', auth });
-  return sheets;
-}
+/* ============================================================
+   LECTURA / ESCRITURA
+   ============================================================ */
 
 export async function readSheet(sheetName: string): Promise<Record<string, string>[]> {
   const sheets = await getSheet();
@@ -171,7 +194,10 @@ export async function getConfig(clave: string): Promise<string | null> {
   return found ? found.valor : null;
 }
 
-// Auth functions
+/* ============================================================
+   AUTH
+   ============================================================ */
+
 export async function registrarUsuario(datos: {
   nombre_completo: string;
   correo: string;
@@ -192,19 +218,9 @@ export async function registrarUsuario(datos: {
   const hash = sha256(datos.contrasena + salt);
   const hoy = new Date().toISOString().split('T')[0];
   await appendRow('Usuarios', [
-    id,
-    datos.nombre_completo,
-    datos.correo,
-    datos.usuario_login,
-    hash,
-    salt,
-    datos.rol || 'Ganadero',
-    datos.telefono || '',
-    '',
-    'Activo',
-    hoy,
-    '',
-    '0',
+    id, datos.nombre_completo, datos.correo, datos.usuario_login,
+    hash, salt, datos.rol || 'Ganadero', datos.telefono || '',
+    '', 'Activo', hoy, '', '0',
   ]);
   return { success: true, id_usuario: id };
 }
@@ -297,7 +313,6 @@ export async function registrarAnimalCompleto(datos: any): Promise<{ id_animal: 
   });
   await appendRow('Animales', animalRow);
 
-  // Fenotipico
   if (datos.fenotipico && Object.values(datos.fenotipico).some((v: any) => v)) {
     const fenId = await getNextId('FEN');
     const fenHeaders = SHEET_HEADERS['Registro_Fenotipico'];
@@ -311,7 +326,6 @@ export async function registrarAnimalCompleto(datos: any): Promise<{ id_animal: 
     await appendRow('Registro_Fenotipico', fenRow);
   }
 
-  // Genotipico
   if (datos.genotipico && Object.values(datos.genotipico).some((v: any) => v)) {
     const genId = await getNextId('GEN');
     const genHeaders = SHEET_HEADERS['Registro_Genotipico'];

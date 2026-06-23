@@ -1,6 +1,6 @@
 # Guia de Conexion: AGROVELAS + Google Sheets
 
-Esta guia explica paso a paso como conectar tu pagina Astro con Google Sheets como base de datos.
+Esta guia explica como conectar el proyecto Astro con Google Sheets para usar como base de datos en local y en produccion (Vercel).
 
 ---
 
@@ -10,16 +10,14 @@ Esta guia explica paso a paso como conectar tu pagina Astro con Google Sheets co
 1. Ve a https://sheets.new
 2. Renombra el spreadsheet a `AGROVELAS_Data`
 3. Ve a **Extensiones > Apps Script**
-4. Borra el codigo vacio y pega TODO el contenido de `INIT_SHEETS.gs` (esta en la carpeta `task/agrovelas/`)
+4. Borra el codigo vacio y pega TODO el contenido de `task/agrovelas/init_and_demo.gs`
 5. Guarda (Ctrl+S) y nombralo `AGROVELAS Init`
 6. Selecciona la funcion `inicializarBaseDeDatos` y haz click en **Ejecutar**
 7. Acepta los permisos (primera ejecucion pide autorizacion)
 8. Listo - se crearan 22 hojas con sus encabezados
 
 ### Opcion B: Crear manualmente
-1. Ve a https://sheets.new
-2. Crea las hojas con los nombres y columnas de `AGROVELAS_Sheet_Schema.md`
-3. Pobla la hoja `Listas` y `Secuencias` con los valores iniciales
+Crea las hojas con los nombres y columnas definidos en `SHEET_HEADERS` en `src/lib/sheets.ts`
 
 ---
 
@@ -35,11 +33,11 @@ Esta guia explica paso a paso como conectar tu pagina Astro con Google Sheets co
 
 ---
 
-## Paso 3: Crear credenciales de Google Cloud
+## Paso 3: Crear Service Account en Google Cloud
 
 1. Ve a https://console.cloud.google.com
-2. Crea un proyecto nuevo (o usa uno existente):
-   - Click en el selector de proyecto (barra superior) > **Nuevo proyecto**
+2. Crea un proyecto (o usa uno existente):
+   - Click en el selector de proyecto > **Nuevo proyecto**
    - Nombre: `AGROVELAS` > **Crear**
 3. Habilita la API de Google Sheets:
    - Menu lateral > **APIs y servicios > Biblioteca**
@@ -48,52 +46,64 @@ Esta guia explica paso a paso como conectar tu pagina Astro con Google Sheets co
    - Menu lateral > **APIs y servicios > Credenciales**
    - **Crear credenciales > Cuenta de servicio**
    - Nombre: `agrovelas-service`
-   - Rol: **Editor** (o roles/sheets.admin si quieres acceso total)
+   - Rol: **Editor** (o roles/sheets.admin)
    - **Listo**
 5. Genera la clave JSON:
    - Click en la cuenta de servicio creada
    - Pestaña **Claves > Agregar clave > Crear clave nueva > JSON**
    - Se descargara un archivo `.json`
-6. **IMPORTANTE**: Renombra el archivo descargado a `google-credentials.json` y colocalo en la raiz del proyecto (`agrovelas-astro/`)
 
 ---
 
 ## Paso 4: Compartir el Sheet con la cuenta de servicio
 
-1. Abre el archivo `google-credentials.json`
+1. Abre el archivo `.json` descargado
 2. Copia el valor de `client_email` (ej: `agrovelas-service@tu-proyecto.iam.gserviceaccount.com`)
 3. Abre tu Google Sheet de AGROVELAS
 4. Click en **Compartir** (boton azul arriba a la derecha)
 5. Pega el email de la cuenta de servicio
 6. Dale rol de **Editor**
-7. Click en **Enviar** (o **Compartir**)
+7. Click en **Enviar**
 
 ---
 
 ## Paso 5: Configurar variables de entorno
 
-1. Crea un archivo `.env` en la raiz del proyecto:
-   ```bash
-   cp .env.example .env
-   ```
-2. Edita `.env` y pon el ID de tu Google Sheet:
-   ```
-   GOOGLE_SHEET_ID=1AbCdEf2GhIjKlMnOpQrStUvWxYz1234567890
-   ```
+### Desarrollo local
+Crea o edita el archivo `.env` en la raiz del proyecto:
+
+```bash
+cp .env.example .env
+```
+
+Edita `.env` con los valores de tu Service Account y Sheet:
+
+```
+GOOGLE_SHEET_ID=1AbCdEf2GhIjKlMnOpQrStUvWxYz1234567890
+GOOGLE_CLIENT_EMAIL=agrovelas-service@tu-proyecto.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQ...\n-----END PRIVATE KEY-----\n"
+```
+
+**Importante**: `GOOGLE_PRIVATE_KEY` debe tener `\n` literales (no saltos de linea reales). El sistema los convierte automaticamente.
+
+### Produccion (Vercel)
+1. Ve a tu proyecto en Vercel > **Settings > Environment Variables**
+2. Agrega las 3 variables:
+   - `GOOGLE_SHEET_ID`
+   - `GOOGLE_CLIENT_EMAIL`
+   - `GOOGLE_PRIVATE_KEY` (pega el valor con `\n` literales)
+3. Marca "Include in preview deployments" y "Include in production"
 
 ---
 
 ## Paso 6: Ejecutar el proyecto
 
 ```bash
-# Instalar dependencias (si no lo has hecho)
 npm install
-
-# Iniciar servidor de desarrollo
 npm run dev
 ```
 
-El sitio estara disponible en `http://localhost:4321`
+Disponible en `http://localhost:4321`
 
 ---
 
@@ -102,30 +112,17 @@ El sitio estara disponible en `http://localhost:4321`
 ```
 agrovelas-astro/
 ├── src/
-│   ├── pages/          # Paginas Astro (rutas)
-│   │   ├── api/        # API endpoints (backend SSR)
-│   │   │   ├── auth/   # Login, registro, logout
-│   │   │   └── data/   # CRUD de cada modulo
-│   │   ├── index.astro        # Landing page
-│   │   ├── login.astro        # Pagina de login
-│   │   ├── registro.astro     # Pagina de registro
-│   │   ├── dashboard.astro    # Dashboard principal
-│   │   ├── animales.astro     # Modulo Animales
-│   │   ├── sanidad.astro      # Modulo Sanidad
-│   │   ├── reproduccion.astro # Modulo Reproduccion
-│   │   ├── esquila.astro      # Modulo Esquila
-│   │   ├── iot.astro          # Modulo IoT / Mapa
-│   │   ├── zootecnistas.astro # Directorio Zootecnistas
-│   │   ├── contabilidad.astro # Modulo Contabilidad
-│   │   └── alertas.astro      # Modulo Alertas
+│   ├── pages/          # Paginas + API endpoints
 │   ├── components/     # Componentes reutilizables
 │   ├── layouts/        # Layouts base
-│   ├── lib/            # Libreria de conexion a Sheets
+│   ├── lib/            # Conexion a Google Sheets (JWT)
+│   │   ├── sheets.ts   # CRUD + autenticacion (solo env vars)
+│   │   ├── auth.ts     # Sesion via cookies
+│   │   └── utils.ts    # SHA-256, formatos
 │   └── styles/         # CSS global
-├── google-credentials.json  # Credenciales (NO SUBIR A GIT)
-├── .env                     # Variables de entorno (NO SUBIR A GIT)
-├── .env.example             # Ejemplo de .env
-├── CONEXION.md              # Esta guia
+├── .env                # Variables locales (NO SUBIR A GIT)
+├── .env.example        # Template de variables
+├── CONEXION.md         # Esta guia
 └── package.json
 ```
 
@@ -133,33 +130,34 @@ agrovelas-astro/
 
 ## Solucion de problemas
 
-### Error: "google-credentials.json no encontrado"
-- Asegurate de haber descargado el archivo JSON de Google Cloud y renombrado a `google-credentials.json`
-- Debe estar en la raiz del proyecto (`agrovelas-astro/`)
+### Error: "Faltan variables de entorno"
+- Asegurate de tener las 3 variables: `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SHEET_ID`
+- En local: en tu archivo `.env`
+- En Vercel: en **Settings > Environment Variables**
 
-### Error: "GOOGLE_SHEET_ID no definido"
-- Crea el archivo `.env` con el ID de tu Google Sheet
-- Copia el ID desde la URL de tu sheet
+### Error de autenticacion JWT
+- Verifica que `GOOGLE_PRIVATE_KEY` tenga los `\n` literales (no saltos de linea reales)
+- En Vercel, si pegas la key desde un JSON, asegurate de escapar los saltos de linea como `\n`
 
 ### Error: "The caller does not have permission"
 - Comparte el Google Sheet con el email de la cuenta de servicio (Paso 4)
-- Asegurate de darle rol de **Editor**
+- Debe tener rol de **Editor**
 
-### Error: "Google Sheets API has not been used in project"
+### Error: "Google Sheets API has not been used"
 - Ve a Google Cloud Console y habilita la API de Google Sheets (Paso 3.3)
 
-### Si quieres usar los datos demo
-- Copia el contenido de `INIT_SHEETS.gs` en el Apps Script del Google Sheet
-- Ejecuta `inicializarBaseDeDatos`
-- Ejecuta tambien `poblarDatosDemo` (del archivo `code.gs` en `task/agrovelas/appscript/`)
-- Los datos demo incluyen: 10 animales, 4 usuarios, 3 zootecnistas, registros sanitarios, etc.
+### Verificar conexion en Vercel
+- Revisa los logs de Vercel para ver:
+  - `[AGROVELAS] Variables de entorno validadas correctamente.`
+  - `[AGROVELAS] Autenticacion JWT con Google Sheets exitosa.`
+- Si ves errores de conexion, verifica las variables de entorno en Vercel
 
 ---
 
 ## Usuarios demo (si cargaste los datos demo)
 
 | Usuario | Contrasena | Rol |
-|---------|-----------|-----|
+|---------|-----------|------|
 | juan | 123456 | Ganadero |
 | maria | 123456 | Administrador |
 | carlos | 123456 | Zootecnista |
