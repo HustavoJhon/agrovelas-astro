@@ -5,42 +5,115 @@ import { readSheet } from '../lib/sheets';
 
 const session = getSession(Astro.cookies);
 if (!session) return Astro.redirect('/login');
+
 let zootecnistas: any[] = [];
-try { zootecnistas = await readSheet('Zootecnistas'); } catch (e: any) {}
+let errorMsg = '';
+try { zootecnistas = await readSheet('Zootecnistas'); } catch (e: any) { errorMsg = e.message; }
+
+const especialidadFondo: Record<string, string> = {
+  'Nutricion Animal': 'from-emerald-500 to-emerald-600',
+  'Medicina Veterinaria': 'from-blue-500 to-blue-600',
+  'Genetica y Mejoramiento': 'from-violet-500 to-violet-600',
+  'Sanidad y Epidemiologia': 'from-amber-500 to-amber-600',
+  'Manejo de Pastos': 'from-teal-500 to-teal-600',
+};
+const especialidadIcono: Record<string, string> = {
+  'Nutricion Animal': 'fa-apple-alt',
+  'Medicina Veterinaria': 'fa-stethoscope',
+  'Genetica y Mejoramiento': 'fa-dna',
+  'Sanidad y Epidemiologia': 'fa-shield-virus',
+  'Manejo de Pastos': 'fa-seedling',
+};
+const especialidadColorTexto: Record<string, string> = {
+  'Nutricion Animal': '#059669',
+  'Medicina Veterinaria': '#2563eb',
+  'Genetica y Mejoramiento': '#7c3aed',
+  'Sanidad y Epidemiologia': '#d97706',
+  'Manejo de Pastos': '#0d9488',
+};
 ---
 
 <DashboardLayout title="Zootecnistas" userName={session.nombre} rol={session.rol} currentPage="zootecnistas">
   <div class="page-header">
     <div><h1>Zootecnistas y Veterinarios</h1><p>Directorio de especialistas &middot; <span class="font-medium">{zootecnistas.length} registrados</span></p></div>
   </div>
-  {zootecnistas.length === 0 ? (
+
+  {errorMsg ? (
+    <div class="card p-5 bg-red-50 border-red-200 text-red-700 text-sm">{errorMsg}</div>
+  ) : zootecnistas.length === 0 ? (
     <div class="card"><div class="empty-state"><div class="empty-state-icon"><i class="fas fa-user-md"></i></div><h3>Sin zootecnistas registrados</h3><p>Los especialistas apareceran aqui cuando se registren en el sistema.</p></div></div>
   ) : (
     <div class="stagger grid md:grid-cols-2 lg:grid-cols-3 gap-5">
       {zootecnistas.map((z: any) => {
-        const stars = Array(Math.round(parseFloat(z.calificacion_promedio)||0)).fill(0);
+        const rating = parseFloat(z.calificacion_promedio) || 0;
+        const fullStars = Math.round(rating);
+        const hasHalf = rating - fullStars > 0.2;
+        const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
+        const gradClass = especialidadFondo[z.especialidad] || 'from-slate-500 to-slate-600';
+        const icono = especialidadIcono[z.especialidad] || 'fa-user-md';
+        const colorTag = especialidadColorTexto[z.especialidad] || '#64748b';
+        const iniciales = z.especialidad ? z.especialidad.split(' ').map((w: string) => w[0]).join('').substring(0, 2).toUpperCase() : 'ZO';
+        const fotoUrl = z.foto_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(z.especialidad || 'Zootecnista')}&background=059669&color=fff&size=128&bold=true`;
         return (
-          <div class="card-interactive p-6">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="w-14 h-14 rounded-xl grad-emerald flex items-center justify-center text-white font-bold text-lg shadow shrink-0">{(z.especialidad||'Z')[0]}</div>
-              <div class="min-w-0"><p class="font-bold text-slate-900 truncate">{z.especialidad||'Especialista'}</p><p class="text-xs text-slate-400">{z.anios_experiencia||0} a&ntilde;os de experiencia</p></div>
+          <div class="card-flush stagger" style="animation-delay: 0.05s;">
+            <div class={`bg-gradient-to-r ${gradClass} px-6 py-5 text-white`}>
+              <div class="flex items-center gap-4">
+                <img src={fotoUrl} alt={z.especialidad} class="w-14 h-14 rounded-xl border-2 border-white/30 object-cover shrink-0" loading="lazy" />
+                <div class="min-w-0">
+                  <p class="font-bold text-[15px] leading-tight truncate">{z.especialidad || 'Especialista'}</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <span class="text-xs text-white/70">{z.anios_experiencia || 0} años</span>
+                    <span class="text-white/30">|</span>
+                    <span class="text-xs status-dot active" style="--dot-bg: #22c55e;">{z.estado || 'Disponible'}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="flex items-center gap-1 mb-3 text-xs">
-              {stars.length > 0 ? stars.map(() => <i class="fas fa-star text-amber-400 text-xs"></i>) : <span class="text-slate-300">Sin calificaciones</span>}
-              <span class="text-slate-400 ml-1">({z.numero_calificaciones||0})</span>
+            <div class="p-5 space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-0.5">
+                  {Array.from({ length: fullStars }).map(() => <i class="fas fa-star text-amber-400 text-xs"></i>)}
+                  {hasHalf ? <i class="fas fa-star-half-alt text-amber-400 text-xs"></i> : ''}
+                  {Array.from({ length: emptyStars }).map(() => <i class="far fa-star text-slate-200 text-xs"></i>)}
+                </div>
+                <span class="text-xs text-slate-400">{z.numero_calificaciones || 0} reseñas</span>
+              </div>
+
+              <div class="space-y-2.5 text-sm">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center shrink-0"><i class="fas fa-map-marker-alt text-brand-600 text-xs"></i></div>
+                  <span class="text-slate-600 truncate">{z.zona_cobertura || 'No especificada'}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0"><i class="fas fa-tag text-emerald-600 text-xs"></i></div>
+                  <span class="text-slate-600"><span class="font-semibold text-slate-800">S/ {z.tarifa_consulta || '0.00'}</span> / consulta</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0"><i class="fas fa-phone text-blue-600 text-xs"></i></div>
+                  <span class="text-slate-600">{z.telefono_contacto || 'No disponible'}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center shrink-0"><i class="fas fa-envelope text-purple-600 text-xs"></i></div>
+                  <span class="text-slate-600 truncate">{z.correo_contacto || 'No disponible'}</span>
+                </div>
+              </div>
+
+              {z.biografia ? (
+                <div class="bg-slate-50 rounded-lg p-3">
+                  <p class="text-xs text-slate-500 leading-relaxed">"{z.biografia}"</p>
+                </div>
+              ) : ''}
+
+              <button onclick={"agendarCita('" + z.id_zootecnista + "')"} class="btn btn-primary w-full cursor-pointer">
+                <i class="fas fa-calendar-plus text-xs"></i> Agendar Cita
+              </button>
             </div>
-            <div class="space-y-2 text-sm text-slate-500 mb-4">
-              <div class="flex items-center gap-2"><i class="fas fa-map-marker-alt w-4 text-brand-500 shrink-0"></i><span class="truncate">{z.zona_cobertura||'No especificada'}</span></div>
-              <div class="flex items-center gap-2"><i class="fas fa-tag w-4 text-brand-500 shrink-0"></i>S/ {z.tarifa_consulta||'0.00'} / consulta</div>
-              <div class="flex items-center gap-2"><i class="fas fa-phone w-4 text-brand-500 shrink-0"></i>{z.telefono_contacto||'No disponible'}</div>
-            </div>
-            <p class="text-xs text-slate-400 mb-4 truncate-2">{z.biografia||'Sin biografia.'}</p>
-            <button onclick={"agendarCita('" + z.id_zootecnista + "')"} class="btn btn-primary w-full btn-sm cursor-pointer"><i class="fas fa-calendar-plus text-xs"></i> Agendar Cita</button>
           </div>
         );
       })}
     </div>
   )}
+
   <div id="modalCita" class="modal-backdrop hidden">
     <div class="modal-content max-w-md">
       <div class="modal-header"><div><h3>Agendar Cita</h3></div><button onclick="cerrarModalCita()" class="btn-close"><i class="fas fa-times"></i></button></div>
@@ -48,7 +121,7 @@ try { zootecnistas = await readSheet('Zootecnistas'); } catch (e: any) {}
         <div class="modal-body space-y-4">
           <input type="hidden" id="cZoo" />
           <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Fecha *</label><input id="cFec" type="date" class="form-input" required /></div><div><label class="form-label">Hora *</label><input id="cHor" type="time" class="form-input" required /></div></div>
-          <div><label class="form-label">Motivo de la consulta *</label><textarea id="cMot" class="form-input" rows="3" required placeholder="Describe el motivo..."></textarea></div>
+          <div><label class="form-label">Motivo de la consulta *</label><textarea id="cMot" class="form-input" rows="3" required placeholder="Describe el motivo de tu consulta..."></textarea></div>
         </div>
         <div class="modal-footer"><button type="button" onclick="cerrarModalCita()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-calendar-check text-xs"></i> Agendar</button></div>
       </form>
