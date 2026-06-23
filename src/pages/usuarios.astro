@@ -1,0 +1,96 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import { getSession } from '../lib/auth';
+import { readSheet } from '../lib/sheets';
+
+const session = getSession(Astro.cookies);
+if (!session) return Astro.redirect('/login');
+
+let usuarios: any[] = [];
+let errorMsg = '';
+try { usuarios = await readSheet('Usuarios'); } catch (e: any) { errorMsg = e.message; }
+
+const rolColor: Record<string, string> = {
+  'Ganadero': 'info',
+  'Administrador': 'success',
+  'Zootecnista': 'warning',
+  'Veterinario': 'danger',
+  'Productor': 'neutral',
+};
+const rolIcon: Record<string, string> = {
+  'Ganadero': 'fa-user',
+  'Administrador': 'fa-user-shield',
+  'Zootecnista': 'fa-user-md',
+  'Veterinario': 'fa-stethoscope',
+  'Productor': 'fa-tractor',
+};
+const estadoColor: Record<string, string> = {
+  'Activo': 'success',
+  'Inactivo': 'neutral',
+  'Bloqueado': 'danger',
+};
+---
+
+<DashboardLayout title="Usuarios" userName={session.nombre} rol={session.rol} currentPage="usuarios">
+  <div class="page-header">
+    <div><h1>Usuarios del Sistema</h1><p>Cuentas registradas &middot; <span class="font-medium">{usuarios.length} usuarios</span></p></div>
+  </div>
+
+  {errorMsg ? (
+    <div class="card p-5 bg-red-50 border-red-200 text-red-700 text-sm">{errorMsg}</div>
+  ) : usuarios.length === 0 ? (
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-state-icon"><i class="fas fa-users"></i></div>
+        <h3>Sin usuarios registrados</h3>
+        <p>Los usuarios apareceran aqui cuando se registren en el sistema.</p>
+      </div>
+    </div>
+  ) : (
+    <div class="card-flush">
+      <div class="table-wrap">
+        <table class="table-modern">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Usuario</th>
+              <th>Rol</th>
+              <th>Telefono</th>
+              <th>Estado</th>
+              <th>Registro</th>
+              <th>Ultimo Acceso</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usuarios.map((u: any) => (
+              <tr>
+                <td class="font-mono text-xs font-medium text-brand-700">{u.id_usuario}</td>
+                <td class="font-medium text-slate-800">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+                      {(u.nombre_completo || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <span>{u.nombre_completo || '-'}</span>
+                  </div>
+                </td>
+                <td class="text-slate-500 text-xs">{u.correo || '-'}</td>
+                <td class="font-mono text-xs text-slate-400">{u.usuario_login || '-'}</td>
+                <td>
+                  <span class="badge-modern {rolColor[u.rol] || 'neutral'}">
+                    <i class="fas {rolIcon[u.rol] || 'fa-user'} mr-1"></i>{u.rol || '-'}
+                  </span>
+                </td>
+                <td class="text-slate-400 text-xs">{u.telefono || '-'}</td>
+                <td><span class={"badge-modern " + (estadoColor[u.estado] || 'neutral')}>{u.estado || '-'}</span></td>
+                <td class="text-slate-400 text-xs">{u.fecha_creacion || '-'}</td>
+                <td class="text-slate-400 text-xs">{u.ultimo_acceso || 'Nunca'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )}
+</DashboardLayout>
