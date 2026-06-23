@@ -27,21 +27,21 @@ const balancePos = (ingresos - egresos) >= 0;
 
 <DashboardLayout title="Dashboard" userName={session.nombre} rol={session.rol} currentPage="dashboard">
   {errorMsg ? (
-    <div class="card p-4 bg-red-50 border-red-200 text-red-700 text-sm">
+    <div class="card p-5 bg-red-50 border-red-200 text-red-700 text-sm">
       <div class="flex items-center gap-2 font-medium mb-1"><i class="fas fa-exclamation-triangle"></i> Error de conexion</div>
       <p class="text-red-600/80">{errorMsg}</p>
     </div>
   ) : (
     <>
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div class="page-header">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900">Panel de Control</h1>
-          <p class="text-sm text-slate-500 mt-1">Resumen general de la operacion ganadera</p>
+          <h1>Panel de Control</h1>
+          <p>Resumen general de la operacion ganadera</p>
         </div>
         <a href="/animales?nuevo=1" class="btn btn-primary no-underline"><i class="fas fa-plus text-xs"></i> Nuevo Animal</a>
       </div>
 
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="stagger grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div class="grad-emerald text-white rounded-xl p-5 shadow-lg shadow-brand-200/30">
           <div class="flex items-center justify-between mb-3"><span class="stat-label">Animales</span><i class="fas fa-paw opacity-30 text-lg"></i></div>
           <p class="stat-value">{data.totalAnimales || 0}</p>

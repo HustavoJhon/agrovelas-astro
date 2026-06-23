@@ -13,36 +13,38 @@ const balPos = (ingresos-egresos)>=0;
 ---
 
 <DashboardLayout title="Contabilidad" userName={session.nombre} rol={session.rol} currentPage="contabilidad">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-    <div><h1 class="text-2xl font-bold text-slate-900">Contabilidad</h1><p class="text-sm text-slate-500 mt-1">Ingresos y egresos del predio &middot; <span class="font-medium">{registros.length} movimientos</span></p></div>
+  <div class="page-header">
+    <div><h1>Contabilidad</h1><p>Ingresos y egresos del predio &middot; <span class="font-medium">{registros.length} movimientos</span></p></div>
     <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Movimiento</button>
   </div>
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+  <div class="stagger grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
     <div class="grad-emerald text-white rounded-xl p-5 shadow-lg"><p class="stat-label">Ingresos</p><p class="stat-value mt-1">S/ {ingresos.toFixed(2)}</p></div>
     <div class="grad-rose text-white rounded-xl p-5 shadow-lg"><p class="stat-label">Egresos</p><p class="stat-value mt-1">S/ {egresos.toFixed(2)}</p></div>
     <div class={"rounded-xl p-5 shadow-lg text-white " + (balPos ? 'grad-emerald' : 'grad-rose')}><p class="stat-label">Balance</p><p class="stat-value mt-1">S/ {(ingresos-egresos).toFixed(2)}</p></div>
   </div>
   {registros.length === 0 ? (
-    <div class="card p-12 text-center"><div class="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-6"><i class="fas fa-coins text-3xl text-slate-300"></i></div><h3 class="text-lg font-semibold text-slate-900 mb-2">Sin movimientos contables</h3><p class="text-sm text-slate-500 mb-6">Registra ingresos y egresos para llevar el control financiero.</p><button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo movimiento</button></div>
+    <div class="card"><div class="empty-state"><div class="empty-state-icon"><i class="fas fa-coins"></i></div><h3>Sin movimientos contables</h3><p>Registra ingresos y egresos para llevar el control financiero.</p><button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo movimiento</button></div></div>
   ) : (
-    <div class="card overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Fecha</th><th>Tipo</th><th>Categoria</th><th>Monto</th><th>Descripcion</th></tr></thead><tbody>
+    <div class="card-flush"><div class="table-wrap"><table class="table-modern"><thead><tr><th>Fecha</th><th>Tipo</th><th>Categoria</th><th>Monto</th><th>Descripcion</th></tr></thead><tbody>
       {registros.map((c: any) => {
-        const tc = c.tipo==='Ingreso'?'badge-success':'badge-danger';
+        const tc = c.tipo==='Ingreso'?'success':'danger';
         const mc = c.tipo==='Ingreso'?'text-brand-700':'text-rose-700';
         return (
-          <tr><td class="text-slate-400">{c.fecha||'-'}</td><td><span class={"badge " + tc}>{c.tipo}</span></td><td>{c.categoria||'-'}</td><td class={"font-semibold " + mc}>S/ {c.monto||'0.00'}</td><td class="text-xs text-slate-400">{c.descripcion||'-'}</td></tr>
+          <tr><td class="text-slate-400 text-xs">{c.fecha||'-'}</td><td><span class={"badge-modern " + tc}>{c.tipo}</span></td><td class="text-slate-700">{c.categoria||'-'}</td><td class={"font-semibold " + mc}>S/ {c.monto||'0.00'}</td><td class="text-xs text-slate-400">{c.descripcion||'-'}</td></tr>
         );
       })}
     </tbody></table></div></div>
   )}
   <div id="modalCtb" class="modal-backdrop hidden">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-      <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl"><div><h3 class="text-lg font-bold text-slate-900">Nuevo Movimiento Contable</h3></div><button onclick="cerrarModal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button></div>
-      <form id="ctbForm" class="p-6 space-y-4">
-        <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Tipo</label><select id="ctTip" class="form-input"><option>Ingreso</option><option>Egreso</option></select></div><div><label class="form-label">Monto S/ *</label><input id="ctMon" type="number" step="0.01" class="form-input" required /></div></div>
-        <div><label class="form-label">Categoria</label><input id="ctCat" class="form-input" placeholder="Venta de fibra, Honorarios..." /></div>
-        <div><label class="form-label">Fecha *</label><input id="ctFec" type="date" class="form-input" required /></div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar</button></div>
+    <div class="modal-content max-w-md">
+      <div class="modal-header"><div><h3>Nuevo Movimiento Contable</h3></div><button onclick="cerrarModal()" class="btn-close"><i class="fas fa-times"></i></button></div>
+      <form id="ctbForm">
+        <div class="modal-body space-y-4">
+          <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Tipo</label><select id="ctTip" class="form-input"><option>Ingreso</option><option>Egreso</option></select></div><div><label class="form-label">Monto S/ *</label><input id="ctMon" type="number" step="0.01" class="form-input" required /></div></div>
+          <div><label class="form-label">Categoria</label><input id="ctCat" class="form-input" placeholder="Venta de fibra, Honorarios..." /></div>
+          <div><label class="form-label">Fecha *</label><input id="ctFec" type="date" class="form-input" required /></div>
+        </div>
+        <div class="modal-footer"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar</button></div>
       </form>
     </div>
   </div>

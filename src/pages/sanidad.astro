@@ -12,33 +12,35 @@ try { registros = await readSheet('Sanidad'); } catch (e: any) { errorMsg = e.me
 ---
 
 <DashboardLayout title="Sanidad" userName={session.nombre} rol={session.rol} currentPage="sanidad">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-    <div><h1 class="text-2xl font-bold text-slate-900">Sanidad</h1><p class="text-sm text-slate-500 mt-1">Vacunas, tratamientos y controles &middot; <span class="font-medium">{registros.length} registros</span></p></div>
+  <div class="page-header">
+    <div><h1>Sanidad</h1><p>Vacunas, tratamientos y controles &middot; <span class="font-medium">{registros.length} registros</span></p></div>
     <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Registro</button>
   </div>
-  {errorMsg ? <div class="card p-4 bg-red-50 border-red-200 text-red-700 text-sm">{errorMsg}</div> : registros.length === 0 ? (
-    <div class="card p-12 text-center"><div class="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-6"><i class="fas fa-syringe text-3xl text-slate-300"></i></div><h3 class="text-lg font-semibold text-slate-900 mb-2">Sin registros sanitarios</h3><p class="text-sm text-slate-500 mb-6">Registra vacunaciones, desparasitaciones y tratamientos.</p><button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo registro</button></div>
+  {errorMsg ? <div class="card p-5 bg-red-50 border-red-200 text-red-700 text-sm">{errorMsg}</div> : registros.length === 0 ? (
+    <div class="card"><div class="empty-state"><div class="empty-state-icon"><i class="fas fa-syringe"></i></div><h3>Sin registros sanitarios</h3><p>Registra vacunaciones, desparasitaciones y tratamientos.</p><button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo registro</button></div></div>
   ) : (
-    <div class="card overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Fecha</th><th>Animal</th><th>Tipo</th><th>Producto</th><th>Dosis</th><th>Veterinario</th><th>Estado</th></tr></thead><tbody>
+    <div class="card-flush"><div class="table-wrap"><table class="table-modern"><thead><tr><th>Fecha</th><th>Animal</th><th>Tipo</th><th>Producto</th><th>Dosis</th><th>Veterinario</th><th>Estado</th></tr></thead><tbody>
       {registros.map((s: any) => {
-        const ec = s.estado==='Aplicado'?'badge-success':s.estado==='Programado'?'badge-warning':'badge-danger';
+        const ec = s.estado==='Aplicado'?'success':s.estado==='Programado'?'warning':'danger';
         return (
-          <tr><td class="text-slate-400">{s.fecha||'-'}</td><td class="font-mono text-xs font-medium text-brand-700">{s.id_animal}</td><td>{s.tipo_evento||'-'}</td><td>{s.nombre_producto||'-'}</td><td class="text-xs text-slate-400">{s.dosis||'-'}</td><td class="text-xs">{s.veterinario_responsable||'-'}</td><td><span class={"badge " + ec}>{s.estado}</span></td></tr>
+          <tr><td class="text-slate-400 text-xs">{s.fecha||'-'}</td><td class="font-mono text-xs font-medium text-brand-700">{s.id_animal}</td><td class="text-slate-700">{s.tipo_evento||'-'}</td><td class="text-slate-700">{s.nombre_producto||'-'}</td><td class="text-xs text-slate-400">{s.dosis||'-'}</td><td class="text-xs text-slate-500">{s.veterinario_responsable||'-'}</td><td><span class={"badge-modern " + ec}>{s.estado}</span></td></tr>
         );
       })}
     </tbody></table></div></div>
   )}
 
   <div id="modalSan" class="modal-backdrop hidden">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-      <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl"><div><h3 class="text-lg font-bold text-slate-900">Nuevo Registro Sanitario</h3></div><button onclick="cerrarModal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button></div>
-      <form id="sanForm" class="p-6 space-y-4">
-        <div><label class="form-label">ID del Animal *</label><input id="sAni" class="form-input" required placeholder="ANI-00001" /></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Fecha *</label><input id="sFec" type="date" class="form-input" required /></div><div><label class="form-label">Tipo</label><select id="sTip" class="form-input"><option>Vacunacion</option><option>Desparasitacion</option><option>Tratamiento</option><option>Diagnostico</option><option>Cirugia</option><option>Control de rutina</option></select></div></div>
-        <div><label class="form-label">Producto</label><input id="sProd" class="form-input" placeholder="Nombre del medicamento" /></div>
-        <div><label class="form-label">Dosis y Via</label><input id="sDosis" class="form-input" placeholder="2 ml SC / 1 ml IM" /></div>
-        <div><label class="form-label">Estado</label><select id="sEst" class="form-input"><option>Aplicado</option><option>Programado</option></select></div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar</button></div>
+    <div class="modal-content max-w-md">
+      <div class="modal-header"><div><h3>Nuevo Registro Sanitario</h3></div><button onclick="cerrarModal()" class="btn-close"><i class="fas fa-times"></i></button></div>
+      <form id="sanForm">
+        <div class="modal-body space-y-4">
+          <div><label class="form-label">ID del Animal *</label><input id="sAni" class="form-input" required placeholder="ANI-00001" /></div>
+          <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Fecha *</label><input id="sFec" type="date" class="form-input" required /></div><div><label class="form-label">Tipo</label><select id="sTip" class="form-input"><option>Vacunacion</option><option>Desparasitacion</option><option>Tratamiento</option><option>Diagnostico</option><option>Cirugia</option><option>Control de rutina</option></select></div></div>
+          <div><label class="form-label">Producto</label><input id="sProd" class="form-input" placeholder="Nombre del medicamento" /></div>
+          <div><label class="form-label">Dosis y Via</label><input id="sDosis" class="form-input" placeholder="2 ml SC / 1 ml IM" /></div>
+          <div><label class="form-label">Estado</label><select id="sEst" class="form-input"><option>Aplicado</option><option>Programado</option></select></div>
+        </div>
+        <div class="modal-footer"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar</button></div>
       </form>
     </div>
   </div>

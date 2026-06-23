@@ -10,11 +10,13 @@ try { zootecnistas = await readSheet('Zootecnistas'); } catch (e: any) {}
 ---
 
 <DashboardLayout title="Zootecnistas" userName={session.nombre} rol={session.rol} currentPage="zootecnistas">
-  <div class="mb-6"><h1 class="text-2xl font-bold text-slate-900">Zootecnistas y Veterinarios</h1><p class="text-sm text-slate-500 mt-1">Directorio de especialistas &middot; <span class="font-medium">{zootecnistas.length} registrados</span></p></div>
+  <div class="page-header">
+    <div><h1>Zootecnistas y Veterinarios</h1><p>Directorio de especialistas &middot; <span class="font-medium">{zootecnistas.length} registrados</span></p></div>
+  </div>
   {zootecnistas.length === 0 ? (
-    <div class="card p-12 text-center"><div class="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-6"><i class="fas fa-user-md text-3xl text-slate-300"></i></div><h3 class="text-lg font-semibold text-slate-900 mb-2">Sin zootecnistas registrados</h3><p class="text-sm text-slate-500">Los especialistas apareceran aqui cuando se registren.</p></div>
+    <div class="card"><div class="empty-state"><div class="empty-state-icon"><i class="fas fa-user-md"></i></div><h3>Sin zootecnistas registrados</h3><p>Los especialistas apareceran aqui cuando se registren en el sistema.</p></div></div>
   ) : (
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="stagger grid md:grid-cols-2 lg:grid-cols-3 gap-5">
       {zootecnistas.map((z: any) => {
         const stars = Array(Math.round(parseFloat(z.calificacion_promedio)||0)).fill(0);
         return (
@@ -40,13 +42,15 @@ try { zootecnistas = await readSheet('Zootecnistas'); } catch (e: any) {}
     </div>
   )}
   <div id="modalCita" class="modal-backdrop hidden">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-      <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl"><div><h3 class="text-lg font-bold text-slate-900">Agendar Cita</h3></div><button onclick="cerrarModalCita()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button></div>
-      <form id="citaForm" class="p-6 space-y-4">
-        <input type="hidden" id="cZoo" />
-        <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Fecha *</label><input id="cFec" type="date" class="form-input" required /></div><div><label class="form-label">Hora *</label><input id="cHor" type="time" class="form-input" required /></div></div>
-        <div><label class="form-label">Motivo de la consulta *</label><textarea id="cMot" class="form-input" rows="3" required placeholder="Describe el motivo..."></textarea></div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100"><button type="button" onclick="cerrarModalCita()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-calendar-check text-xs"></i> Agendar</button></div>
+    <div class="modal-content max-w-md">
+      <div class="modal-header"><div><h3>Agendar Cita</h3></div><button onclick="cerrarModalCita()" class="btn-close"><i class="fas fa-times"></i></button></div>
+      <form id="citaForm">
+        <div class="modal-body space-y-4">
+          <input type="hidden" id="cZoo" />
+          <div class="grid grid-cols-2 gap-4"><div><label class="form-label">Fecha *</label><input id="cFec" type="date" class="form-input" required /></div><div><label class="form-label">Hora *</label><input id="cHor" type="time" class="form-input" required /></div></div>
+          <div><label class="form-label">Motivo de la consulta *</label><textarea id="cMot" class="form-input" rows="3" required placeholder="Describe el motivo..."></textarea></div>
+        </div>
+        <div class="modal-footer"><button type="button" onclick="cerrarModalCita()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-calendar-check text-xs"></i> Agendar</button></div>
       </form>
     </div>
   </div>

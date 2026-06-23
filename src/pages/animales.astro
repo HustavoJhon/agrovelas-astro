@@ -12,47 +12,45 @@ try { animales = await readSheet('Animales'); } catch (e: any) { errorMsg = e.me
 ---
 
 <DashboardLayout title="Animales" userName={session.nombre} rol={session.rol} currentPage="animales">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+  <div class="page-header">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Animales</h1>
-      <p class="text-sm text-slate-500 mt-1">Registro y gestion de tu ganado &middot; <span class="font-medium">{animales.length} registrados</span></p>
+      <h1>Animales</h1>
+      <p>Registro y gestion de tu ganado &middot; <span class="font-medium">{animales.length} registrados</span></p>
     </div>
     <button onclick="abrirModalAnimal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Animal</button>
   </div>
 
   {errorMsg ? (
-    <div class="card p-4 bg-red-50 border-red-200 text-red-700 text-sm">{errorMsg}</div>
+    <div class="card p-5 bg-red-50 border-red-200 text-red-700 text-sm">{errorMsg}</div>
   ) : animales.length === 0 ? (
-    <div class="card p-12 text-center">
-      <div class="w-20 h-20 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-6">
-        <svg class="w-10 h-10 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-state-icon"><i class="fas fa-paw"></i></div>
+        <h3>Sin animales registrados</h3>
+        <p>Comienza agregando tu primer animal al sistema.</p>
+        <button onclick="abrirModalAnimal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Registrar primer animal</button>
       </div>
-      <h3 class="text-lg font-semibold text-slate-900 mb-2">Sin animales registrados</h3>
-      <p class="text-sm text-slate-500 mb-6">Comienza agregando tu primer animal al sistema.</p>
-      <button onclick="abrirModalAnimal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Registrar primer animal</button>
     </div>
   ) : (
-    <div class="card overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="data-table">
+    <div class="card-flush">
+      <div class="table-wrap">
+        <table class="table-modern">
           <thead>
-            <tr>
-              <th>ID</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Fecha Nac.</th><th>Lote</th><th>Estado</th>
-            </tr>
+            <tr><th>ID</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Fecha Nac.</th><th>Lote</th><th>Estado</th></tr>
           </thead>
           <tbody>
             {animales.map((a: any) => {
-              const eb = a.estado === 'Activo' ? 'badge-success' : a.estado === 'Vendido' ? 'badge-warning' : 'badge-danger';
+              const ec = a.estado === 'Activo' ? 'success' : a.estado === 'Vendido' ? 'warning' : 'danger';
               return (
                 <tr>
                   <td class="font-mono text-xs font-medium text-brand-700">{a.id_animal}</td>
-                  <td class="font-medium">{a.nombre || '-'}</td>
-                  <td><span class="badge badge-info">{a.especie}</span></td>
-                  <td>{a.raza || '-'}</td>
-                  <td>{a.sexo || '-'}</td>
-                  <td class="text-slate-400">{a.fecha_nacimiento || '-'}</td>
-                  <td class="font-mono text-xs">{a.id_lote_cabana || '-'}</td>
-                  <td><span class={"badge " + eb}>{a.estado}</span></td>
+                  <td class="font-medium text-slate-800">{a.nombre || '-'}</td>
+                  <td><span class="badge-modern info">{a.especie}</span></td>
+                  <td class="text-slate-500">{a.raza || '-'}</td>
+                  <td class="text-slate-500">{a.sexo || '-'}</td>
+                  <td class="text-slate-400 text-xs">{a.fecha_nacimiento || '-'}</td>
+                  <td class="font-mono text-xs text-slate-400">{a.id_lote_cabana || '-'}</td>
+                  <td><span class={"badge-modern " + ec}>{a.estado}</span></td>
                 </tr>
               );
             })}
@@ -63,28 +61,30 @@ try { animales = await readSheet('Animales'); } catch (e: any) { errorMsg = e.me
   )}
 
   <div id="animalModal" class="modal-backdrop hidden">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto">
-      <div class="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-        <div><h3 class="text-lg font-bold text-slate-900">Nuevo Animal</h3><p class="text-xs text-slate-400 mt-0.5">Completa la informacion basica del animal</p></div>
-        <button onclick="cerrarModalAnimal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 transition-colors"><i class="fas fa-times"></i></button>
+    <div class="modal-content max-w-2xl">
+      <div class="modal-header">
+        <div><h3>Nuevo Animal</h3><p>Completa la informacion basica del animal</p></div>
+        <button onclick="cerrarModalAnimal()" class="btn-close"><i class="fas fa-times"></i></button>
       </div>
-      <form id="animalForm" class="p-6 space-y-4">
-        <div class="grid sm:grid-cols-2 gap-4">
-          <div class="sm:col-span-2"><label class="form-label">Especie *</label><select id="fEsp" class="form-input" required><option value="">Seleccionar...</option><option>Alpaca</option><option>Llama</option><option>Oveja</option><option>Bovino</option><option>Caprino</option></select></div>
-          <div><label class="form-label">Sexo *</label><select id="fSexo" class="form-input" required><option value="">Seleccionar...</option><option>Macho</option><option>Hembra</option></select></div>
-          <div><label class="form-label">Raza</label><input id="fRaza" class="form-input" placeholder="Huacaya, Suri, Corriedale..." /></div>
-          <div><label class="form-label">Nombre / Apodo</label><input id="fNom" class="form-input" placeholder="Luna" /></div>
-          <div><label class="form-label">Fecha de Nacimiento</label><input id="fNac" type="date" class="form-input" /></div>
-          <div><label class="form-label">Color principal</label><input id="fCol" class="form-input" placeholder="Blanco, Marron..." /></div>
-          <div><label class="form-label">ID del Padre</label><input id="fPad" class="form-input" placeholder="ANI-00001" /></div>
-          <div><label class="form-label">ID de la Madre</label><input id="fMad" class="form-input" placeholder="ANI-00002" /></div>
-          <div><label class="form-label">Linea Genetica</label><input id="fLin" class="form-input" placeholder="Linea Pacomarca 3" /></div>
-          <div><label class="form-label">Procedencia</label><select id="fProc" class="form-input"><option>Nacido en predio</option><option>Comprado</option><option>Donado</option></select></div>
-          <div><label class="form-label">Codigo Arete / RFID</label><input id="fArete" class="form-input" placeholder="ARQ-1001" /></div>
-          <div><label class="form-label">Lote / Cabana</label><input id="fLote" class="form-input" placeholder="LOT-00001" /></div>
-          <div class="sm:col-span-2"><label class="form-label">Observaciones</label><textarea id="fObs" class="form-input" rows="2" placeholder="Notas adicionales..."></textarea></div>
+      <form id="animalForm">
+        <div class="modal-body">
+          <div class="fields-grid">
+            <div class="span-2"><label class="form-label">Especie *</label><select id="fEsp" class="form-input" required><option value="">Seleccionar...</option><option>Alpaca</option><option>Llama</option><option>Oveja</option><option>Bovino</option><option>Caprino</option></select></div>
+            <div><label class="form-label">Sexo *</label><select id="fSexo" class="form-input" required><option value="">Seleccionar...</option><option>Macho</option><option>Hembra</option></select></div>
+            <div><label class="form-label">Raza</label><input id="fRaza" class="form-input" placeholder="Huacaya, Suri, Corriedale..." /></div>
+            <div><label class="form-label">Nombre / Apodo</label><input id="fNom" class="form-input" placeholder="Luna" /></div>
+            <div><label class="form-label">Fecha de Nacimiento</label><input id="fNac" type="date" class="form-input" /></div>
+            <div><label class="form-label">Color principal</label><input id="fCol" class="form-input" placeholder="Blanco, Marron..." /></div>
+            <div><label class="form-label">ID del Padre</label><input id="fPad" class="form-input" placeholder="ANI-00001" /></div>
+            <div><label class="form-label">ID de la Madre</label><input id="fMad" class="form-input" placeholder="ANI-00002" /></div>
+            <div><label class="form-label">Linea Genetica</label><input id="fLin" class="form-input" placeholder="Linea Pacomarca 3" /></div>
+            <div><label class="form-label">Procedencia</label><select id="fProc" class="form-input"><option>Nacido en predio</option><option>Comprado</option><option>Donado</option></select></div>
+            <div><label class="form-label">Codigo Arete / RFID</label><input id="fArete" class="form-input" placeholder="ARQ-1001" /></div>
+            <div><label class="form-label">Lote / Cabana</label><input id="fLote" class="form-input" placeholder="LOT-00001" /></div>
+            <div class="span-2"><label class="form-label">Observaciones</label><textarea id="fObs" class="form-input" rows="2" placeholder="Notas adicionales..."></textarea></div>
+          </div>
         </div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+        <div class="modal-footer">
           <button type="button" onclick="cerrarModalAnimal()" class="btn btn-secondary">Cancelar</button>
           <button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar Animal</button>
         </div>
