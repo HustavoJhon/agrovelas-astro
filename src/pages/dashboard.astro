@@ -23,6 +23,10 @@ if (data?.animales) data.animales.forEach((a: any) => { agrup[a.especie] = (agru
 const especies = Object.keys(agrup);
 const cuentas = Object.values(agrup);
 const balancePos = (ingresos - egresos) >= 0;
+const tieneNotifs = (data?.notificaciones || []).length > 0;
+const tieneActividades = (data?.actividades || []).length > 0;
+const tieneAlertas = (data?.alertasLista || []).length > 0;
+const balance = (ingresos - egresos).toFixed(0);
 ---
 
 <DashboardLayout title="Dashboard" userName={session.nombre} rol={session.rol} currentPage="dashboard">
@@ -44,84 +48,122 @@ const balancePos = (ingresos - egresos) >= 0;
       <div class="stagger grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div class="grad-emerald text-white rounded-xl p-5 shadow-lg shadow-brand-200/30">
           <div class="flex items-center justify-between mb-3"><span class="stat-label">Animales</span><i class="fas fa-paw opacity-30 text-lg"></i></div>
-          <p class="stat-value">{data.totalAnimales || 0}</p>
+          <p class="stat-value">{data?.totalAnimales || 0}</p>
           <p class="text-xs opacity-70 mt-1">Total registrados</p>
         </div>
         <div class="grad-blue text-white rounded-xl p-5 shadow-lg shadow-blue-200/30">
           <div class="flex items-center justify-between mb-3"><span class="stat-label">Alertas</span><i class="fas fa-exclamation-triangle opacity-30 text-lg"></i></div>
-          <p class="stat-value">{data.alertas}</p>
+          <p class="stat-value">{data?.alertas || 0}</p>
           <p class="text-xs opacity-70 mt-1">En seguimiento</p>
         </div>
         <div class="grad-amber text-white rounded-xl p-5 shadow-lg shadow-amber-200/30">
           <div class="flex items-center justify-between mb-3"><span class="stat-label">Especialistas</span><i class="fas fa-user-md opacity-30 text-lg"></i></div>
-          <p class="stat-value">{(data.zootecnistas || []).length}</p>
+          <p class="stat-value">{(data?.zootecnistas || []).length}</p>
           <p class="text-xs opacity-70 mt-1">Disponibles</p>
         </div>
         <div class={"rounded-xl p-5 shadow-lg text-white " + (balancePos ? 'grad-emerald shadow-brand-200/30' : 'grad-rose shadow-rose-200/30')}>
           <div class="flex items-center justify-between mb-3"><span class="stat-label">Balance</span><i class="fas fa-coins opacity-30 text-lg"></i></div>
-          <p class="stat-value">S/ {(ingresos - egresos).toFixed(0)}</p>
+          <p class="stat-value">{Number(balance) >= 0 ? 'S/ ' + balance : '-S/ ' + Math.abs(Number(balance))}</p>
           <p class="text-xs opacity-70 mt-1">Ingresos - Egresos</p>
         </div>
       </div>
 
       <div class="grid lg:grid-cols-3 gap-6 mb-8">
         <div class="lg:col-span-2 card p-6">
-          <h3 class="text-base font-semibold text-slate-900 mb-1">Distribucion de Animales</h3>
-          <p class="text-xs text-slate-400 mb-6">Cantidad por especie</p>
-          <div style="height: 280px"><canvas id="chartAnimals"></canvas></div>
+          <div class="flex items-center justify-between mb-5">
+            <div><h3 class="text-base font-semibold text-slate-900">Distribucion de Animales</h3><p class="text-xs text-slate-400 mt-0.5">Cantidad por especie</p></div>
+            {especies.length > 0 ? <span class="badge-modern neutral">{data?.totalAnimales || 0} total</span> : ''}
+          </div>
+          {especies.length > 0 ? (
+            <div style="height: 270px;"><canvas id="chartAnimals"></canvas></div>
+          ) : (
+            <div class="flex items-center justify-center" style="height: 270px;">
+              <div class="text-center">
+                <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-3"><i class="fas fa-chart-bar text-xl text-slate-300"></i></div>
+                <p class="text-sm text-slate-400">Registra animales para ver el grafico</p>
+              </div>
+            </div>
+          )}
         </div>
         <div class="card p-6">
-          <h3 class="text-base font-semibold text-slate-900 mb-1">Estado Financiero</h3>
-          <p class="text-xs text-slate-400 mb-6">Ingresos vs Egresos</p>
-          <div style="height: 280px"><canvas id="chartFinance"></canvas></div>
+          <div class="flex items-center justify-between mb-5">
+            <div><h3 class="text-base font-semibold text-slate-900">Estado Financiero</h3><p class="text-xs text-slate-400 mt-0.5">Ingresos vs Egresos</p></div>
+            {(ingresos > 0 || egresos > 0) ? <span class="badge-modern neutral">S/ {balance}</span> : ''}
+          </div>
+          {(ingresos > 0 || egresos > 0) ? (
+            <div style="height: 270px;"><canvas id="chartFinance"></canvas></div>
+          ) : (
+            <div class="flex items-center justify-center" style="height: 270px;">
+              <div class="text-center">
+                <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-3"><i class="fas fa-chart-pie text-xl text-slate-300"></i></div>
+                <p class="text-sm text-slate-400">Agrega movimientos contables</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       <div class="grid lg:grid-cols-2 gap-6">
-        <div class="card p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-slate-900">Notificaciones recientes</h3>
-            <span class="badge badge-neutral">{(data.notificaciones || []).length}</span>
+        <div class="card-flush">
+          <div class="card-header-flush">
+            <div><h3 class="text-base font-semibold text-slate-900">Notificaciones recientes</h3><p class="text-xs text-slate-400 mt-0.5">Alertas y avisos del sistema</p></div>
+            <span class="badge-modern neutral">{(data?.notificaciones || []).length}</span>
           </div>
-          <div class="space-y-2">
-            {(data.notificaciones || []).length === 0 ? (
-              <div class="text-center py-8 text-slate-400 text-sm">Sin notificaciones pendientes</div>
+          <div style="padding: 0.75rem 1.25rem;">
+            {tieneNotifs ? (
+              <div class="space-y-2">
+                {(data.notificaciones || []).slice(0, 5).map((n: any) => {
+                  let ic = 'default';
+                  if (n.prioridad === 'Alta' || n.prioridad === 'Critica') ic = 'urgent';
+                  else if (n.prioridad === 'Media') ic = 'medium';
+                  else if (n.prioridad === 'Baja') ic = 'low';
+                  return (
+                    <div class={"notif-card " + ic}>
+                      <div class="flex items-start gap-2.5">
+                        <i class={"fas fa-bell mt-0.5 text-xs " + (ic === 'urgent' ? 'text-rose-600' : ic === 'medium' ? 'text-amber-600' : 'text-blue-600')}></i>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm text-slate-700">{n.mensaje}</p>
+                          <p class="text-xs text-slate-400 mt-1">{n.fecha_generacion || ''}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             ) : (
-              (data.notificaciones || []).slice(0, 5).map((n: any) => {
-                let cls = 'notif-card default';
-                if (n.prioridad === 'Alta' || n.prioridad === 'Critica') cls = 'notif-card urgent';
-                else if (n.prioridad === 'Media') cls = 'notif-card medium';
-                else if (n.prioridad === 'Baja') cls = 'notif-card low';
-                return (
-                  <div class={cls}>
-                    <p class="text-sm text-slate-700">{n.mensaje}</p>
-                    <p class="text-xs text-slate-400 mt-1">{n.fecha_generacion || ''}</p>
-                  </div>
-                );
-              })
+              <div class="text-center py-8">
+                <div class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center mx-auto mb-3"><i class="fas fa-check-circle text-lg text-slate-300"></i></div>
+                <p class="text-sm text-slate-400">Sin notificaciones pendientes</p>
+              </div>
             )}
           </div>
         </div>
-        <div class="card p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-slate-900">Proximas actividades</h3>
-            <span class="badge badge-neutral">{(data.actividades || []).length}</span>
+        <div class="card-flush">
+          <div class="card-header-flush">
+            <div><h3 class="text-base font-semibold text-slate-900">Proximas actividades</h3><p class="text-xs text-slate-400 mt-0.5">Agenda y tareas programadas</p></div>
+            <span class="badge-modern neutral">{(data?.actividades || []).length}</span>
           </div>
-          <div class="space-y-2">
-            {(data.actividades || []).length === 0 ? (
-              <div class="text-center py-8 text-slate-400 text-sm">Sin actividades programadas</div>
+          <div style="padding: 0.75rem 1.25rem;">
+            {tieneActividades ? (
+              <div class="space-y-2">
+                {(data.actividades || []).slice(0, 5).map((a: any) => (
+                  <div class="activity-item">
+                    <div class="w-10 h-10 rounded-lg bg-brand-100 flex items-center justify-center shrink-0">
+                      <i class="fas fa-calendar-day text-brand-600 text-sm"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-medium text-slate-700 truncate">{a.titulo}</p>
+                      <p class="text-xs text-slate-400">{a.fecha}{a.hora ? ' · ' + a.hora : ''}</p>
+                    </div>
+                    <span class="badge-modern neutral text-[10px]">{a.tipo}</span>
+                  </div>
+                ))}
+              </div>
             ) : (
-              (data.actividades || []).slice(0, 5).map((a: any) => (
-                <div class="activity-item">
-                  <div class="w-10 h-10 rounded-lg bg-brand-100 flex items-center justify-center shrink-0">
-                    <i class="fas fa-calendar-day text-brand-600 text-sm"></i>
-                  </div>
-                  <div class="min-w-0">
-                    <p class="text-sm font-medium text-slate-700 truncate">{a.titulo}</p>
-                    <p class="text-xs text-slate-400">{a.fecha}{a.hora ? ' \u2022 ' + a.hora : ''}</p>
-                  </div>
-                </div>
-              ))
+              <div class="text-center py-8">
+                <div class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center mx-auto mb-3"><i class="fas fa-calendar text-lg text-slate-300"></i></div>
+                <p class="text-sm text-slate-400">Sin actividades programadas</p>
+              </div>
             )}
           </div>
         </div>
@@ -130,21 +172,57 @@ const balancePos = (ingresos - egresos) >= 0;
   )}
 </DashboardLayout>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script define:vars={{ especies, cuentas, ingresos, egresos }}>
+<script is:inline>
   (function() {
-    var colors = ['#059669','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#10b981','#ec4899'];
-    if (typeof Chart !== 'undefined') {
-      var c1 = document.getElementById('chartAnimals');
-      if (c1 && especies.length > 0) {
-        new Chart(c1, { type: 'bar', data: { labels: especies, datasets: [{ data: cuentas, backgroundColor: colors.slice(0, especies.length), borderRadius: 8, borderSkipped: false }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
+    function waitForChart(attempts) {
+      if (typeof Chart !== 'undefined') {
+        initCharts();
+        return;
       }
-      var c2 = document.getElementById('chartFinance');
-      if (c2) {
-        new Chart(c2, { type: 'doughnut', data: { labels: ['Ingresos','Egresos'], datasets: [{ data: [ingresos||0, egresos||0], backgroundColor: ['#059669','#ef4444'], borderWidth: 0, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyleWidth: 8 } } } } });
-      }
-    } else {
-      setTimeout(function(){ if(typeof Chart === 'undefined') window.location.reload(); }, 1500);
+      if (attempts > 20) return;
+      setTimeout(function() { waitForChart(attempts + 1); }, 200);
     }
+    document.addEventListener('DOMContentLoaded', function() { waitForChart(0); });
   })();
+
+  function initCharts() {
+    var especies = [];
+    var cuentas = [];
+    var ingresos = 0;
+    var egresos = 0;
+
+    try {
+      var el = document.getElementById('chartData');
+      if (el) {
+        var d = JSON.parse(el.textContent);
+        especies = d.especies || [];
+        cuentas = d.cuentas || [];
+        ingresos = d.ingresos || 0;
+        egresos = d.egresos || 0;
+      }
+    } catch(e) {}
+
+    var colors = ['#059669','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#10b981','#ec4899'];
+
+    var c1 = document.getElementById('chartAnimals');
+    if (c1 && especies.length > 0) {
+      new Chart(c1, {
+        type: 'bar',
+        data: { labels: especies, datasets: [{ data: cuentas, backgroundColor: colors.slice(0, especies.length), borderRadius: 8, borderSkipped: false }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false }, ticks: { font: { family: 'Inter, system-ui, sans-serif', size: 11 } } } } }
+      });
+    }
+
+    var c2 = document.getElementById('chartFinance');
+    if (c2 && (ingresos > 0 || egresos > 0)) {
+      new Chart(c2, {
+        type: 'doughnut',
+        data: { labels: ['Ingresos','Egresos'], datasets: [{ data: [ingresos, egresos], backgroundColor: ['#059669','#ef4444'], borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10, font: { family: 'Inter, system-ui, sans-serif', size: 12 } } } } }
+      });
+    }
+  }
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+<script type="application/json" id="chartData">{JSON.stringify({ especies, cuentas, ingresos, egresos })}</script>
