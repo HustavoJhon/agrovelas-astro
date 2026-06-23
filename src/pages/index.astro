@@ -17,79 +17,84 @@ if (session) return Astro.redirect('/dashboard');
           <span class="text-lg font-bold text-white tracking-tight">AGROVELAS</span>
         </a>
         <div class="hidden md:flex items-center gap-6">
-          <a href="#features" class="text-sm text-white/70 hover:text-white transition-colors no-underline">Funcionalidades</a>
-          <a href="#how-it-works" class="text-sm text-white/70 hover:text-white transition-colors no-underline">Como Funciona</a>
-          <a href="/acerca" class="text-sm text-white/70 hover:text-white transition-colors no-underline">Acerca de</a>
+          <a href="/acerca" class="text-sm text-white/70 hover:text-white transition-colors no-underline">Nosotros</a>
+          <a href="#modulos" class="text-sm text-white/70 hover:text-white transition-colors no-underline">Modulos</a>
+          <a href="#faq" class="text-sm text-white/70 hover:text-white transition-colors no-underline">FAQ</a>
         </div>
         <div class="flex items-center gap-3">
-          <a href="/login" class="btn btn-sm bg-white text-brand-700 hover:bg-brand-50 no-underline">Iniciar Sesion</a>
-          <a href="/registro" class="hidden sm:inline-flex btn btn-sm border border-white/30 text-white hover:bg-white/10 no-underline">Registrarse</a>
+          <a href="/login" class="btn btn-sm bg-white text-brand-700 hover:bg-brand-50 no-underline">Ingresar</a>
+          <a href="/registro" class="hidden sm:inline-flex btn btn-sm border border-white/30 text-white hover:bg-white/10 no-underline">Crear Cuenta</a>
         </div>
       </div>
     </div>
   </nav>
 
+  <!-- HERO -->
   <section class="relative min-h-screen flex items-center overflow-hidden" style="background: linear-gradient(160deg, #022c22 0%, #064e3b 30%, #065f46 60%, #047857 100%);">
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
       <div class="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-brand-400/10 blur-[120px]"></div>
       <div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full bg-emerald-300/10 blur-[100px]"></div>
-      <div class="absolute top-1/3 left-1/4 w-[300px] h-[300px] rounded-full bg-brand-500/5 blur-[80px]"></div>
-      <svg class="absolute bottom-0 inset-x-0" viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0 60C240 120 480 0 720 30s480-30 720 0v90H0V60z" fill="#f8fafc" opacity="0.06"/></svg>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-40">
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-40 w-full">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         <div class="anim-fade-up" style="animation-delay: 0.1s">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white/80 text-xs font-medium mb-8">
             <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-brand-400"></span></span>
-            Plataforma de Gestion Ganadera v2.0
+            Hecho en Cusco &mdash; Peru
           </div>
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.08] text-balance mb-6">
             Gestion ganadera <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 to-emerald-200">inteligente</span> para el campo peruano
           </h1>
           <p class="text-lg text-brand-100/80 leading-relaxed mb-10 max-w-lg">
-            Diseñado para productores altoandinos. Digitaliza el control de tu ganado: sanidad, reproduccion, trazabilidad, esquila, finanzas y geolocalizacion IoT en una sola plataforma.
+            Digitaliza el control de tu ganado: sanidad, reproduccion, trazabilidad, esquila, finanzas y geolocalizacion IoT en una sola plataforma. Diseñado para productores altoandinos.
           </p>
           <div class="flex flex-wrap gap-4">
             <a href="/registro" class="btn btn-primary btn-lg no-underline shadow-xl shadow-brand-900/30">
               Comenzar Gratis
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
-            <a href="#features" class="btn btn-lg border border-white/20 text-white hover:bg-white/10 no-underline">
-              Explorar Funcionalidades
-            </a>
+            <a href="#modulos" class="btn btn-lg border border-white/20 text-white hover:bg-white/10 no-underline">Ver Modulos</a>
+          </div>
+
+          <div class="flex items-center gap-6 mt-12 pt-8 border-t border-white/10">
+            <div class="flex -space-x-2">
+              <div class="w-9 h-9 rounded-full border-2 border-emerald-800 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-[10px] font-bold">JM</div>
+              <div class="w-9 h-9 rounded-full border-2 border-emerald-800 bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-[10px] font-bold">RV</div>
+              <div class="w-9 h-9 rounded-full border-2 border-emerald-800 bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center text-white text-[10px] font-bold">AL</div>
+              <div class="w-9 h-9 rounded-full border-2 border-emerald-800 bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white text-[10px] font-bold">+</div>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-white">+120 productores</p>
+              <p class="text-xs text-brand-200/60">confian en AGROVELAS</p>
+            </div>
           </div>
         </div>
 
         <div class="hidden lg:block anim-slide-right" style="animation-delay: 0.3s">
           <div class="relative">
-            <div class="glass-dark rounded-2xl p-8 space-y-5">
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white/10 rounded-xl p-5 text-center">
-                  <p class="text-3xl font-bold text-white">22</p>
-                  <p class="text-xs text-brand-200/70 mt-1">Modulos integrados</p>
-                </div>
-                <div class="bg-white/10 rounded-xl p-5 text-center">
-                  <p class="text-3xl font-bold text-white">IoT</p>
-                  <p class="text-xs text-brand-200/70 mt-1">GPS en tiempo real</p>
-                </div>
-                <div class="bg-white/10 rounded-xl p-5 text-center">
-                  <p class="text-3xl font-bold text-white">QR</p>
-                  <p class="text-xs text-brand-200/70 mt-1">Trazabilidad total</p>
-                </div>
-                <div class="bg-white/10 rounded-xl p-5 text-center">
-                  <p class="text-3xl font-bold text-white">S/</p>
-                  <p class="text-xs text-brand-200/70 mt-1">Control financiero</p>
-                </div>
+            <div class="absolute -inset-4 bg-gradient-to-r from-brand-500/20 to-emerald-400/20 rounded-3xl blur-2xl"></div>
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-brand-900/30">
+              <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&auto=format&fit=crop" alt="Paisaje andino" class="w-full h-[520px] object-cover" loading="eager" />
+              <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-emerald-900/10 to-transparent"></div>
+
+              <div class="absolute top-4 right-4 glass-dark rounded-xl p-4 text-white text-center min-w-[120px]">
+                <p class="text-2xl font-bold">22</p>
+                <p class="text-[10px] text-white/70 mt-0.5">Modulos integrados</p>
               </div>
-              <div class="bg-white/5 rounded-xl p-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-2 h-2 rounded-full bg-brand-400"></div>
-                  <p class="text-sm text-white/60">Sincronizado con Google Sheets</p>
+
+              <div class="absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-2">
+                <div class="glass-dark rounded-xl py-3 px-2 text-center">
+                  <p class="text-lg font-bold text-white">IoT</p>
+                  <p class="text-[10px] text-white/60">GPS tiempo real</p>
                 </div>
-                <div class="flex items-center gap-3 mt-2">
-                  <div class="w-2 h-2 rounded-full bg-brand-400"></div>
-                  <p class="text-sm text-white/60">Accesible sin conexion permanente</p>
+                <div class="glass-dark rounded-xl py-3 px-2 text-center">
+                  <p class="text-lg font-bold text-white">QR</p>
+                  <p class="text-[10px] text-white/60">Trazabilidad</p>
+                </div>
+                <div class="glass-dark rounded-xl py-3 px-2 text-center">
+                  <p class="text-lg font-bold text-white">S/</p>
+                  <p class="text-[10px] text-white/60">Finanzas</p>
                 </div>
               </div>
             </div>
@@ -99,64 +104,153 @@ if (session) return Astro.redirect('/dashboard');
     </div>
 
     <div class="absolute bottom-8 inset-x-0 flex justify-center z-10">
-      <a href="#features" class="text-white/40 hover:text-white/70 transition-colors">
+      <a href="#stats" class="text-white/40 hover:text-white/70 transition-colors">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
       </a>
     </div>
   </section>
 
-  <section id="features" class="py-24 sm:py-32 bg-white">
+  <!-- STATS COUNTERS -->
+  <section id="stats" class="py-16 bg-white border-y border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="text-center scroll-animate">
+          <p class="text-4xl font-extrabold text-brand-600"><span class="counter" data-target="22">0</span></p>
+          <p class="text-sm text-slate-500 mt-1 font-medium">Modulos funcionales</p>
+          <p class="text-xs text-slate-400 mt-0.5">Gestion integral del predio</p>
+        </div>
+        <div class="text-center scroll-animate">
+          <p class="text-4xl font-extrabold text-blue-600"><span class="counter" data-target="120">0</span>+</p>
+          <p class="text-sm text-slate-500 mt-1 font-medium">Productores activos</p>
+          <p class="text-xs text-slate-400 mt-0.5">En toda la region Cusco</p>
+        </div>
+        <div class="text-center scroll-animate">
+          <p class="text-4xl font-extrabold text-amber-600"><span class="counter" data-target="14">0</span></p>
+          <p class="text-sm text-slate-500 mt-1 font-medium">Especies soportadas</p>
+          <p class="text-xs text-slate-400 mt-0.5">Alpacas, llamas, ovinos y mas</p>
+        </div>
+        <div class="text-center scroll-animate">
+          <p class="text-4xl font-extrabold text-purple-600"><span class="counter" data-target="100">0</span>%</p>
+          <p class="text-sm text-slate-500 mt-1 font-medium">En la nube</p>
+          <p class="text-xs text-slate-400 mt-0.5">Accesible desde cualquier lugar</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT / STORY -->
+  <section class="py-24 sm:py-32 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="scroll-animate">
+          <div class="text-xs font-semibold text-brand-600 uppercase tracking-[0.15em] mb-3">Nuestra Historia</div>
+          <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 text-balance mb-6">Nacido en los Andes, para los Andes</h2>
+          <p class="text-slate-500 leading-relaxed mb-4">AGROVELAS nace en Cusco, Peru, con la mision de llevar tecnologia accesible al productor ganadero altoandino. Sabemos que la trazabilidad, el control sanitario y la gestion financiera son claves para la competitividad del sector.</p>
+          <p class="text-slate-500 leading-relaxed mb-6">Por eso creamos una plataforma que funciona con Google Sheets &mdash; sin servidores costosos, sin infraestructura compleja. Solo necesitas un navegador y conexion a internet.</p>
+          <div class="flex flex-wrap gap-6">
+            <div class="flex items-center gap-2 text-sm text-slate-600"><i class="fas fa-check-circle text-brand-600"></i> Codigo abierto</div>
+            <div class="flex items-center gap-2 text-sm text-slate-600"><i class="fas fa-check-circle text-brand-600"></i> Datos en tu poder</div>
+            <div class="flex items-center gap-2 text-sm text-slate-600"><i class="fas fa-check-circle text-brand-600"></i> Sin mensualidades</div>
+          </div>
+        </div>
+        <div class="relative scroll-animate">
+          <div class="absolute -inset-3 bg-gradient-to-r from-brand-500/10 to-emerald-400/10 rounded-3xl blur-xl"></div>
+          <div class="relative rounded-2xl overflow-hidden shadow-xl">
+            <img src="https://images.unsplash.com/photo-1516307365426-bea591f05011?w=800&q=80&auto=format&fit=crop" alt="Cusco - Peru" class="w-full h-80 object-cover" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+            <div class="absolute bottom-4 left-4 right-4">
+              <p class="text-white text-sm font-semibold">Cusco, Peru</p>
+              <p class="text-white/60 text-xs">Capital historica del Peru</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODULES -->
+  <section id="modulos" class="py-24 sm:py-32 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto mb-16">
-        <div class="text-xs font-semibold text-brand-600 uppercase tracking-[0.15em]">Funcionalidades</div>
+        <div class="text-xs font-semibold text-brand-600 uppercase tracking-[0.15em]">Modulos</div>
         <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mt-3 text-balance">Todo lo que necesitas para gestionar tu ganado</h2>
-        <p class="text-slate-500 mt-4 text-balance">Una plataforma integral diseñada especificamente para las necesidades del productor ganadero altoandino.</p>
+        <p class="text-slate-500 mt-4 text-balance">22 modulos integrados que cubren cada aspecto de la produccion ganadera altoandina.</p>
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="card-interactive p-6 group">
-          <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 group-hover:bg-brand-100 transition-colors">
-            <svg class="w-6 h-6 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <div class="card-interactive p-6 group scroll-animate">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition-colors shrink-0">
+              <svg class="w-6 h-6 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="rounded-lg overflow-hidden flex-1 h-20">
+              <img src="https://images.unsplash.com/photo-1559563458-527698bf5295?w=200&q=60&auto=format&fit=crop" alt="Animales" class="w-full h-full object-cover" loading="lazy" />
+            </div>
           </div>
           <h3 class="text-lg font-semibold text-slate-900 mb-2">Registro de Animales</h3>
           <p class="text-sm text-slate-500 leading-relaxed">Ficha completa con datos fenotipicos, geneticos, genealogia, fotos y codigo QR para trazabilidad total de cada animal.</p>
         </div>
 
-        <div class="card-interactive p-6 group">
-          <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
-            <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <div class="card-interactive p-6 group scroll-animate">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors shrink-0">
+              <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div class="rounded-lg overflow-hidden flex-1 h-20">
+              <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=200&q=60&auto=format&fit=crop" alt="Sanidad" class="w-full h-full object-cover" loading="lazy" />
+            </div>
           </div>
           <h3 class="text-lg font-semibold text-slate-900 mb-2">Sanidad y Alertas</h3>
           <p class="text-sm text-slate-500 leading-relaxed">Calendario de vacunacion, registro de tratamientos, desparasitaciones y alertas inteligentes para animales en seguimiento.</p>
         </div>
 
-        <div class="card-interactive p-6 group">
-          <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-4 group-hover:bg-purple-100 transition-colors">
-            <svg class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <div class="card-interactive p-6 group scroll-animate">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center group-hover:bg-purple-100 transition-colors shrink-0">
+              <svg class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="rounded-lg overflow-hidden flex-1 h-20">
+              <img src="https://images.unsplash.com/photo-1516307365426-bea591f05011?w=200&q=60&auto=format&fit=crop" alt="Reproduccion" class="w-full h-full object-cover" loading="lazy" />
+            </div>
           </div>
           <h3 class="text-lg font-semibold text-slate-900 mb-2">Reproduccion</h3>
           <p class="text-sm text-slate-500 leading-relaxed">Control de empadre, gestacion y partos. Calculo automatico de fechas probables de parto segun especie.</p>
         </div>
 
-        <div class="card-interactive p-6 group">
-          <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center mb-4 group-hover:bg-amber-100 transition-colors">
-            <svg class="w-6 h-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div class="card-interactive p-6 group scroll-animate">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors shrink-0">
+              <svg class="w-6 h-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="rounded-lg overflow-hidden flex-1 h-20">
+              <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=200&q=60&auto=format&fit=crop" alt="IoT" class="w-full h-full object-cover" loading="lazy" />
+            </div>
           </div>
           <h3 class="text-lg font-semibold text-slate-900 mb-2">Mapa IoT y GPS</h3>
           <p class="text-sm text-slate-500 leading-relaxed">Geolocalizacion en tiempo real de animales con collares GPS y sensores LoRa. Visualiza todo en un mapa interactivo.</p>
         </div>
 
-        <div class="card-interactive p-6 group">
-          <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mb-4 group-hover:bg-emerald-100 transition-colors">
-            <svg class="w-6 h-6 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <div class="card-interactive p-6 group scroll-animate">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-colors shrink-0">
+              <svg class="w-6 h-6 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="rounded-lg overflow-hidden flex-1 h-20">
+              <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=200&q=60&auto=format&fit=crop" alt="Finanzas" class="w-full h-full object-cover" loading="lazy" />
+            </div>
           </div>
           <h3 class="text-lg font-semibold text-slate-900 mb-2">Contabilidad Ganadera</h3>
           <p class="text-sm text-slate-500 leading-relaxed">Control de ingresos y egresos, balance general, registro de comprobantes. Vinculado a animales y esquila.</p>
         </div>
 
-        <div class="card-interactive p-6 group">
-          <div class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center mb-4 group-hover:bg-rose-100 transition-colors">
-            <svg class="w-6 h-6 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div class="card-interactive p-6 group scroll-animate">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center group-hover:bg-rose-100 transition-colors shrink-0">
+              <svg class="w-6 h-6 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="rounded-lg overflow-hidden flex-1 h-20">
+              <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=200&q=60&auto=format&fit=crop" alt="Zootecnistas" class="w-full h-full object-cover" loading="lazy" />
+            </div>
           </div>
           <h3 class="text-lg font-semibold text-slate-900 mb-2">Zootecnistas y Citas</h3>
           <p class="text-sm text-slate-500 leading-relaxed">Directorio de especialistas, calificaciones, agenda de citas y horarios para conectar productores con veterinarios.</p>
@@ -165,47 +259,201 @@ if (session) return Astro.redirect('/dashboard');
     </div>
   </section>
 
-  <section id="how-it-works" class="py-24 sm:py-32 bg-slate-50">
+  <!-- HOW IT WORKS -->
+  <section class="py-24 sm:py-32 bg-slate-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto mb-16">
         <div class="text-xs font-semibold text-brand-600 uppercase tracking-[0.15em]">Proceso</div>
         <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mt-3 text-balance">Como empezar en 3 pasos</h2>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="text-center relative">
-          <div class="w-16 h-16 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-lg shadow-brand-200">1</div>
-          <h3 class="text-lg font-semibold text-slate-900 mb-3">Registrate</h3>
-          <p class="text-sm text-slate-500">Crea tu cuenta gratuita en segundos. Solo necesitas un nombre de usuario y contraseña.</p>
-          <div class="hidden md:block absolute top-8 left-[calc(100%-1rem)] w-12 h-0.5 bg-brand-200"></div>
+      <div class="grid md:grid-cols-3 gap-8 lg:gap-12">
+        <div class="text-center scroll-animate">
+          <div class="relative mb-6 inline-block">
+            <div class="w-20 h-20 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto text-2xl font-bold shadow-lg shadow-brand-200">1</div>
+            <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-amber-400 flex items-center justify-center text-white text-[10px] font-bold"><i class="fas fa-user-plus"></i></div>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-3">Crea tu cuenta</h3>
+          <p class="text-sm text-slate-500">Registrate gratis con tu nombre de usuario y contrasena. No necesitas tarjeta de credito ni contratos.</p>
+          <div class="hidden md:block absolute top-10 left-[calc(100%-1rem)] w-12 h-0.5 bg-brand-200"></div>
         </div>
-        <div class="text-center relative">
-          <div class="w-16 h-16 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-lg shadow-brand-200">2</div>
+        <div class="text-center scroll-animate">
+          <div class="relative mb-6 inline-block">
+            <div class="w-20 h-20 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto text-2xl font-bold shadow-lg shadow-brand-200">2</div>
+            <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-blue-400 flex items-center justify-center text-white text-[10px] font-bold"><i class="fas fa-paw"></i></div>
+          </div>
           <h3 class="text-lg font-semibold text-slate-900 mb-3">Registra tus animales</h3>
           <p class="text-sm text-slate-500">Agrega tu ganado con datos completos: especie, raza, genealogia, sanidad y mas desde el panel de control.</p>
-          <div class="hidden md:block absolute top-8 left-[calc(100%-1rem)] w-12 h-0.5 bg-brand-200"></div>
+          <div class="hidden md:block absolute top-10 left-[calc(100%-1rem)] w-12 h-0.5 bg-brand-200"></div>
         </div>
-        <div class="text-center">
-          <div class="w-16 h-16 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-lg shadow-brand-200">3</div>
+        <div class="text-center scroll-animate">
+          <div class="relative mb-6 inline-block">
+            <div class="w-20 h-20 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto text-2xl font-bold shadow-lg shadow-brand-200">3</div>
+            <div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-purple-400 flex items-center justify-center text-white text-[10px] font-bold"><i class="fas fa-chart-line"></i></div>
+          </div>
           <h3 class="text-lg font-semibold text-slate-900 mb-3">Gestiona y controla</h3>
-          <p class="text-sm text-slate-500">Monitorea sanidad, reproduccion, finanzas y ubicacion de todo tu ganado desde un solo lugar.</p>
+          <p class="text-sm text-slate-500">Monitorea sanidad, reproduccion, finanzas y ubicacion de todo tu ganado desde un solo tablero.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="py-24 sm:py-32 bg-brand-900 relative overflow-hidden">
+  <!-- TECHNOLOGY -->
+  <section class="py-24 sm:py-32 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <div class="text-xs font-semibold text-brand-600 uppercase tracking-[0.15em]">Tecnologia</div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mt-3 text-balance">Arquitectura moderna, operacion simple</h2>
+        <p class="text-slate-500 mt-4 text-balance">Construido con tecnologias web modernas, desplegado en la nube, sincronizado con Google Sheets.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="text-center scroll-animate">
+          <div class="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center mx-auto mb-5">
+            <svg class="w-8 h-8 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>
+          </div>
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Google Sheets</h3>
+          <p class="text-sm text-slate-500">Tus datos viven en Google Sheets. Los exportas cuando quieras. Sin vendor lock-in, sin bases de datos ocultas.</p>
+        </div>
+        <div class="text-center scroll-animate">
+          <div class="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-5">
+            <svg class="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3 class="text-base font-semibold text-slate-900 mb-2">Tiempo Real</h3>
+          <p class="text-sm text-slate-500">Cada registro, actualizacion y alerta se sincroniza al instante. Todos los usuarios ven la misma informacion.</p>
+        </div>
+        <div class="text-center scroll-animate">
+          <div class="w-16 h-16 rounded-2xl bg-purple-50 flex items-center justify-center mx-auto mb-5">
+            <svg class="w-8 h-8 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <h3 class="text-base font-semibold text-slate-900 mb-2">IoT Integrado</h3>
+          <p class="text-sm text-slate-500">Soporte para collares GPS, sensores LoRa y caravanas RFID. Visualiza la ubicacion en mapas interactivos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="py-24 sm:py-32 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <div class="text-xs font-semibold text-brand-600 uppercase tracking-[0.15em]">Testimonios</div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mt-3 text-balance">Lo que dicen los productores</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="card p-6 scroll-animate">
+          <div class="flex items-center gap-1 text-amber-400 text-xs mb-4">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed mb-6">&ldquo;Antes usaba cuadernos para llevar el control de mis alpacas. Ahora con AGROVELAS tengo todo digitalizado. La trazabilidad es otro nivel.&rdquo;</p>
+          <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-sm font-bold">JM</div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Juan Mamani</p>
+              <p class="text-xs text-slate-400">Productor de alpacas &middot; Espinar</p>
+            </div>
+          </div>
+        </div>
+        <div class="card p-6 scroll-animate">
+          <div class="flex items-center gap-1 text-amber-400 text-xs mb-4">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed mb-6">&ldquo;El modulo de contabilidad me salvo. Ahora se exactamente cuanto ingreso por fibra y cuales son mis costos. Lo recomiendo totalmente.&rdquo;</p>
+          <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold">RV</div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Rosa Villacorta</p>
+              <p class="text-xs text-slate-400">Ganadera &middot; Canchis</p>
+            </div>
+          </div>
+        </div>
+        <div class="card p-6 scroll-animate">
+          <div class="flex items-center gap-1 text-amber-400 text-xs mb-4">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed mb-6">&ldquo;El mapa IoT me permite saber donde estan mis animales en tiempo real. Cuando uno se pierde, se exactamente donde buscar. Es increible.&rdquo;</p>
+          <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-sm font-bold">AL</div>
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Alejandro Llanos</p>
+              <p class="text-xs text-slate-400">Comunidad Campesina &middot; Anta</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-24 sm:py-32 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <div class="text-xs font-semibold text-brand-600 uppercase tracking-[0.15em]">FAQ</div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mt-3 text-balance">Preguntas frecuentes</h2>
+      </div>
+
+      <div class="space-y-3">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>Que necesito para usar AGROVELAS?</span>
+            <i class="fas fa-chevron-down text-xs transition-all duration-200"></i>
+          </button>
+          <div class="faq-answer"><p class="text-sm text-slate-500 leading-relaxed">Solo necesitas un navegador web (Chrome, Firefox, Edge) y conexion a internet. No requieres instalar nada. Tus datos se almacenan en Google Sheets, asi que tampoco necesitas base de datos ni servidor propio.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>Es realmente gratuito?</span>
+            <i class="fas fa-chevron-down text-xs transition-all duration-200"></i>
+          </button>
+          <div class="faq-answer"><p class="text-sm text-slate-500 leading-relaxed">Si. AGROVELAS es de codigo abierto y puedes usarlo sin costo. Solo necesitas tu propia cuenta de Google para crear el archivo de Sheets donde se almacenaran los datos de tu predio.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>Que especies puedo registrar?</span>
+            <i class="fas fa-chevron-down text-xs transition-all duration-200"></i>
+          </button>
+          <div class="faq-answer"><p class="text-sm text-slate-500 leading-relaxed">AGROVELAS soporta alpacas (Huacaya y Suri), llamas, ovinos, bovinos y caprinos. Cada especie tiene sus propias configuraciones de gestacion, peso y manejo.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>Funciona sin internet?</span>
+            <i class="fas fa-chevron-down text-xs transition-all duration-200"></i>
+          </button>
+          <div class="faq-answer"><p class="text-sm text-slate-500 leading-relaxed">La aplicacion requiere internet para funcionar. Sin embargo, como los datos se guardan en Google Sheets, puedes usar la app movil de Sheets para consultar tu informacion sin conexion si la sincronizas previamente.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>Como se protegen mis datos?</span>
+            <i class="fas fa-chevron-down text-xs transition-all duration-200"></i>
+          </button>
+          <div class="faq-answer"><p class="text-sm text-slate-500 leading-relaxed">Tus datos estan en tu propia cuenta de Google Sheets, protegidos por la seguridad de Google (cifrado en reposo y en transito). La aplicacion solo accede a las hojas que autorizas mediante credenciales de API.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="py-24 sm:py-32 relative overflow-hidden" style="background: linear-gradient(160deg, #022c22 0%, #064e3b 40%, #065f46 70%, #047857 100%);">
     <div class="absolute inset-0 opacity-10">
       <div class="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
       <div class="absolute bottom-10 right-10 w-96 h-96 bg-brand-400 rounded-full blur-3xl"></div>
     </div>
+    <div class="absolute inset-0">
+      <img src="https://images.unsplash.com/photo-1470071459604-7b8ec44ffd4b?w=1600&q=60&auto=format&fit=crop" alt="" class="w-full h-full object-cover opacity-[0.04]" loading="lazy" />
+    </div>
     <div class="relative z-10 max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
       <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6 text-balance">Listo para transformar la gestion de tu ganado?</h2>
-      <p class="text-brand-100/80 text-lg mb-10 max-w-xl mx-auto">Unete a los productores que ya confian en AGROVELAS para digitalizar y optimizar su produccion ganadera.</p>
-      <a href="/registro" class="btn btn-primary btn-lg bg-white text-brand-700 hover:bg-brand-50 no-underline shadow-xl shadow-black/20">Crear cuenta gratuita</a>
+      <p class="text-brand-100/80 text-lg mb-10 max-w-xl mx-auto">Unete a los productores que ya confian en AGROVELAS para digitalizar y optimizar su produccion ganadera. Gratis, sin compromiso.</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="/registro" class="btn btn-primary btn-lg bg-white text-brand-700 hover:bg-brand-50 no-underline shadow-xl shadow-black/20">Crear cuenta gratuita</a>
+        <a href="/login" class="btn btn-lg border border-white/20 text-white hover:bg-white/10 no-underline">Iniciar Sesion</a>
+      </div>
+      <p class="text-xs text-brand-200/40 mt-6">No necesitas tarjeta de credito &middot; Sin contratos &middot; Cancela cuando quieras</p>
     </div>
   </section>
 
+  <!-- FOOTER -->
   <footer class="bg-slate-900 text-slate-400 py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid md:grid-cols-4 gap-8 mb-12">
@@ -216,20 +464,24 @@ if (session) return Astro.redirect('/dashboard');
             </div>
             <span class="text-lg font-bold text-white">AGROVELAS</span>
           </div>
-          <p class="text-sm max-w-sm">Sistema de gestion ganadera inteligente para productores altoandinos. Desarrollado en Cusco, Peru.</p>
+          <p class="text-sm max-w-sm leading-relaxed">Sistema de gestion ganadera inteligente para productores altoandinos. Desarrollado en Cusco, Peru &mdash; corazon de los Andes.</p>
+          <div class="flex items-center gap-4 mt-4">
+            <a href="#" class="text-slate-500 hover:text-white transition-colors"><i class="fab fa-github"></i></a>
+            <a href="#" class="text-slate-500 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+          </div>
         </div>
         <div>
           <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">Producto</h4>
-          <div class="space-y-2"><a href="#features" class="text-sm hover:text-white transition-colors no-underline block">Funcionalidades</a><a href="/acerca" class="text-sm hover:text-white transition-colors no-underline block">Acerca de</a></div>
+          <div class="space-y-2.5"><a href="#modulos" class="text-sm hover:text-white transition-colors no-underline block">Modulos</a><a href="#" class="text-sm hover:text-white transition-colors no-underline block">Precios</a><a href="/acerca" class="text-sm hover:text-white transition-colors no-underline block">Acerca de</a></div>
         </div>
         <div>
           <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">Soporte</h4>
-          <div class="space-y-2"><a href="mailto:contacto@agrovelas.pe" class="text-sm hover:text-white transition-colors no-underline block">Contacto</a></div>
+          <div class="space-y-2.5"><a href="mailto:contacto@agrovelas.pe" class="text-sm hover:text-white transition-colors no-underline block">Contacto</a><a href="#faq" class="text-sm hover:text-white transition-colors no-underline block">FAQ</a></div>
         </div>
       </div>
       <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p class="text-xs">&copy; 2026 AGROVELAS. Todos los derechos reservados.</p>
-        <p class="text-xs">Hecho en Cusco, Peru</p>
+        <p class="text-xs flex items-center gap-1">Hecho con <span class="text-red-400">&hearts;</span> en Cusco, Peru</p>
       </div>
     </div>
   </footer>
@@ -237,9 +489,47 @@ if (session) return Astro.redirect('/dashboard');
 
 <style>
   #navbar.scrolled { background: rgba(2,44,34,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+  .scroll-animate { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+  .scroll-animate.visible { opacity: 1; transform: translateY(0); }
+
+  .faq-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+  .faq-item:hover { border-color: #cbd5e1; }
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: white;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #0f172a;
+    text-align: left;
+    gap: 1rem;
+  }
+  .faq-question:hover { background: #f8fafc; }
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 1.25rem;
+  }
+  .faq-answer.open {
+    max-height: 300px;
+    padding: 0 1.25rem 1.25rem;
+  }
+  .faq-item.open .faq-question i { transform: rotate(180deg); }
 </style>
 
-<script>
+<script is:inline>
   let lastScroll = 0;
   window.addEventListener('scroll', () => {
     const nav = document.getElementById('navbar');
@@ -247,5 +537,64 @@ if (session) return Astro.redirect('/dashboard');
       if (window.scrollY > 20) nav.classList.add('scrolled');
       else nav.classList.remove('scrolled');
     }
+  });
+
+  function toggleFAQ(/** @type {HTMLElement} */ btn) {
+    var item = btn.closest('.faq-item');
+    var answer = item.querySelector('.faq-answer');
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(function(el) {
+      if (el !== item) {
+        el.classList.remove('open');
+        el.querySelector('.faq-answer').classList.remove('open');
+      }
+    });
+    if (isOpen) {
+      item.classList.remove('open');
+      answer.classList.remove('open');
+    } else {
+      item.classList.add('open');
+      answer.classList.add('open');
+    }
+  }
+
+  function animateCounters() {
+    document.querySelectorAll('.counter').forEach(function(el) {
+      var target = parseInt(el.getAttribute('data-target'));
+      var current = 0;
+      var step = Math.ceil(target / 40);
+      var timer = setInterval(function() {
+        current += step;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = current;
+      }, 30);
+    });
+  }
+
+  function onScrollAnimate() {
+    var els = document.querySelectorAll('.scroll-animate:not(.visible)');
+    els.forEach(function(el) {
+      var rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight - 80) {
+        el.classList.add('visible');
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    onScrollAnimate();
+    var statsSection = document.querySelector('#stats');
+    if (statsSection) {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            animateCounters();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+      observer.observe(statsSection);
+    }
+    window.addEventListener('scroll', onScrollAnimate);
   });
 </script>
