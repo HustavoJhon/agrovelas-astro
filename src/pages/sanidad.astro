@@ -11,7 +11,7 @@ let errorMsg = '';
 try { registros = await readSheet('Sanidad'); } catch (e: any) { errorMsg = e.message; }
 ---
 
-<DashboardLayout title="Sanidad" userName={session.nombre} rol={session.rol} currentPage="sanidad">
+<DashboardLayout title="Sanidad" userName={session.nombre} rol={session.rol} currentPage="sanidad" chatData={{}}>
   <div class="page-header">
     <div><h1>Sanidad</h1><p>Vacunas, tratamientos y controles &middot; <span class="font-medium">{registros.length} registros</span></p></div>
     <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Registro</button>

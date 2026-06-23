@@ -10,7 +10,7 @@ try { alertas = await readSheet('Animales_Alerta'); } catch (e: any) {}
 const activas = alertas.filter(a => a.estado === 'En seguimiento' || a.estado === 'Derivado').length;
 ---
 
-<DashboardLayout title="Alertas" userName={session.nombre} rol={session.rol} currentPage="alertas">
+<DashboardLayout title="Alertas" userName={session.nombre} rol={session.rol} currentPage="alertas" chatData={{ alertasLista: alertas, alertas: alertas.length }}>
   <div class="page-header">
     <div><h1>Alertas Sanitarias</h1><p>Animales bajo seguimiento &middot; <span class="font-medium text-rose-600">{activas} activas</span></p></div>
     <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nueva Alerta</button>

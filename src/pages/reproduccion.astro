@@ -10,7 +10,7 @@ let errorMsg = '';
 try { registros = await readSheet('Reproduccion'); } catch (e: any) { errorMsg = e.message; }
 ---
 
-<DashboardLayout title="Reproduccion" userName={session.nombre} rol={session.rol} currentPage="reproduccion">
+<DashboardLayout title="Reproduccion" userName={session.nombre} rol={session.rol} currentPage="reproduccion" chatData={{}}>
   <div class="page-header">
     <div><h1>Reproduccion</h1><p>Control reproductivo &middot; <span class="font-medium">{registros.length} eventos</span></p></div>
     <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Evento</button>

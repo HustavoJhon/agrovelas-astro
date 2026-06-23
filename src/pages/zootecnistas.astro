@@ -33,7 +33,7 @@ const especialidadColorTexto: Record<string, string> = {
 };
 ---
 
-<DashboardLayout title="Zootecnistas" userName={session.nombre} rol={session.rol} currentPage="zootecnistas">
+<DashboardLayout title="Zootecnistas" userName={session.nombre} rol={session.rol} currentPage="zootecnistas" chatData={{ zootecnistas }}>
   <div class="page-header">
     <div><h1>Zootecnistas y Veterinarios</h1><p>Directorio de especialistas &middot; <span class="font-medium">{zootecnistas.length} registrados</span></p></div>
   </div>

@@ -11,7 +11,7 @@ let errorMsg = '';
 try { animales = await readSheet('Animales'); } catch (e: any) { errorMsg = e.message; }
 ---
 
-<DashboardLayout title="Animales" userName={session.nombre} rol={session.rol} currentPage="animales">
+<DashboardLayout title="Animales" userName={session.nombre} rol={session.rol} currentPage="animales" chatData={{ animales }}>
   <div class="page-header">
     <div>
       <h1>Animales</h1>

@@ -13,10 +13,10 @@
     <div id="chatMessages" class="chat-messages">
       <div class="chat-msg bot">
         <div class="chat-bubble bot">Hola! Soy el asistente de AGROVELAS. Puedo ayudarte con:<br><br>
-          <span class="chat-quick" onclick="sendQuick('Que modulo tiene el sistema?')">📋 Modulos del sistema</span><br>
-          <span class="chat-quick" onclick="sendQuick('Como registro un animal?')">🐾 Registrar un animal</span><br>
-          <span class="chat-quick" onclick="sendQuick('Que es el mapa IoT?')">📍 Mapa IoT</span><br>
-          <span class="chat-quick" onclick="sendQuick('Como agendo una cita con zootecnista?')">📅 Agendar cita</span>
+          <span class="chat-quick" onclick="sendQuick('Dame un resumen del predio')">📊 Resumen del predio</span><br>
+          <span class="chat-quick" onclick="sendQuick('Cuantos animales tengo?')">🐾 Contar animales</span><br>
+          <span class="chat-quick" onclick="sendQuick('Cual es mi balance financiero?')">💰 Balance financiero</span><br>
+          <span class="chat-quick" onclick="sendQuick('Que modulo tiene el sistema?')">📋 Modulos del sistema</span>
         </div>
       </div>
     </div>
@@ -42,6 +42,35 @@
     sendMsg();
   }
 
+  function getChatData() {
+    try {
+      var el = document.getElementById('chatData');
+      return el ? JSON.parse(el.textContent) : null;
+    } catch(e) { return null; }
+  }
+
+  var colores = ['#059669','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#10b981','#ec4899','#0d9488'];
+
+  function barChartHTML(labels, values, label) {
+    var max = Math.max.apply(null, values) || 1;
+    var total = values.reduce(function(a,b){return a+b}, 0);
+    var html = '<div style="margin-top:8px;">';
+    for (var i = 0; i < labels.length; i++) {
+      var pct = (values[i] / max * 100).toFixed(0);
+      var color = colores[i % colores.length];
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">' +
+        '<span style="font-size:11px;color:#475569;width:80px;text-align:right;flex-shrink:0;">' + escapeHTML(labels[i]) + '</span>' +
+        '<div style="flex:1;height:18px;background:#f1f5f9;border-radius:4px;overflow:hidden;">' +
+          '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;' + (pct < 15 ? 'min-width:0;' : '') + '"></div>' +
+        '</div>' +
+        '<span style="font-size:11px;font-weight:600;color:#0f172a;width:30px;">' + values[i] + '</span>' +
+      '</div>';
+    }
+    html += '<div style="text-align:right;font-size:10px;color:#94a3b8;margin-top:2px;">Total: ' + total + ' ' + (label || '') + '</div>';
+    html += '</div>';
+    return html;
+  }
+
   var respuestas = {
     'modulo': 'AGROVELAS tiene <b>22 modulos</b> integrados:<br><br>🐾 <b>Animales</b> - Registro y trazabilidad<br>💉 <b>Sanidad</b> - Vacunas y tratamientos<br>🧬 <b>Reproduccion</b> - Control reproductivo<br>✂️ <b>Esquila</b> - Gestion de fibra<br>💰 <b>Contabilidad</b> - Finanzas del predio<br>🚨 <b>Alertas</b> - Seguimiento sanitario<br>👨‍⚕️ <b>Zootecnistas</b> - Directorio de especialistas<br>📍 <b>Mapa IoT</b> - Geolocalizacion GPS<br><br>Navega por el menu lateral para explorarlos.',
     'animal': 'Para registrar un animal:<br><br>1. Ve a <b>Animales</b> en el menu lateral<br>2. Haz click en <b>Nuevo Animal</b><br>3. Completa los campos (especie, sexo, raza, etc.)<br>4. Haz click en <b>Guardar</b><br><br>El sistema generara automaticamente un ID unico y un codigo QR para el animal.',
@@ -51,20 +80,113 @@
     'reproduccion': 'El modulo de <b>Reproduccion</b> controla:<br><br>🤝 Empadre y monta natural<br>🔬 Inseminacion artificial<br>🤰 Diagnostico de gestacion<br>👶 Partos y nacimientos<br>🍼 Destete<br><br>Calcula automaticamente las fechas probables de parto segun la especie.',
     'contabilidad': 'El modulo de <b>Contabilidad</b> registra:<br><br>💰 Ingresos (venta de fibra, animales, etc.)<br>📉 Egresos (insumos, servicios, mantenimiento)<br>📊 Balance general<br>📎 Comprobantes vinculados<br><br>Los movimientos se pueden asociar a animales o registros de esquila.',
     'esquila': 'El modulo de <b>Esquila</b> gestiona:<br><br>✂️ Peso del vellon por animal<br>🏷️ Categoria de fibra (Baby, Fleece, etc.)<br>📏 Micronaje y calidad<br>💰 Precio por kg e ingreso total<br>👥 Compradores y destinos<br><br>Ideal para productores de alpacas y llamas.',
-    'default': 'No tengo una respuesta para esa pregunta. Estas son algunas opciones:<br><br><span class="chat-quick" onclick="sendQuick(\'Que modulo tiene el sistema?\')">📋 Modulos del sistema</span><br><span class="chat-quick" onclick="sendQuick(\'Como registro un animal?\')">🐾 Registrar un animal</span><br><span class="chat-quick" onclick="sendQuick(\'Que es el mapa IoT?\')">📍 Mapa IoT</span><br><span class="chat-quick" onclick="sendQuick(\'Como funciona sanidad?\')">💉 Modulo Sanidad</span><br><span class="chat-quick" onclick="sendQuick(\'Como funciona contabilidad?\')">💰 Modulo Contabilidad</span>'
+    'default': 'No tengo una respuesta para esa pregunta. Estas son algunas opciones:<br><br><span class="chat-quick" onclick="sendQuick(\'Dame un resumen del predio\')">📊 Resumen del predio</span><br><span class="chat-quick" onclick="sendQuick(\'Cuantos animales tengo?\')">🐾 Contar animales</span><br><span class="chat-quick" onclick="sendQuick(\'Cual es mi balance financiero?\')">💰 Balance financiero</span><br><span class="chat-quick" onclick="sendQuick(\'Que modulo tiene el sistema?\')">📋 Modulos del sistema</span>'
   };
 
   function buscarRespuesta(msg) {
     var m = msg.toLowerCase();
+    if (m.indexOf('resumen') > -1 || m.indexOf('resume') > -1 || m.indexOf('general') > -1) return 'resumen';
+    if ((m.indexOf('animal') > -1 && (m.indexOf('cuanto') > -1 || m.indexOf('tengo') > -1 || m.indexOf('hay') > -1 || m.indexOf('especie') > -1))) return 'animales_contar';
+    if (m.indexOf('balance') > -1 || m.indexOf('financiero') > -1 || m.indexOf('dinero') > -1 || (m.indexOf('contab') > -1 && (m.indexOf('cuanto') > -1 || m.indexOf('tengo') > -1))) return 'balance_resp';
+    if (m.indexOf('alerta') > -1 && (m.indexOf('cuanta') > -1 || m.indexOf('tengo') > -1 || m.indexOf('hay') > -1)) return 'alertas_resp';
+    if ((m.indexOf('esquila') > -1 && (m.indexOf('cuanta') > -1 || m.indexOf('tengo') > -1 || m.indexOf('ingreso') > -1))) return 'esquila_resp';
     if (m.indexOf('modulo') > -1 || m.indexOf('sistema') > -1 || m.indexOf('funcionalidade') > -1) return 'modulo';
     if (m.indexOf('animal') > -1 && (m.indexOf('registr') > -1 || m.indexOf('nuevo') > -1 || m.indexOf('crear') > -1 || m.indexOf('agregar') > -1)) return 'animal';
     if (m.indexOf('iot') > -1 || m.indexOf('mapa') > -1 || m.indexOf('gps') > -1 || m.indexOf('ubicacion') > -1 || m.indexOf('localiz') > -1) return 'iot';
     if (m.indexOf('cita') > -1 || m.indexOf('agendar') > -1 || m.indexOf('zootecnista') > -1 || m.indexOf('especialista') > -1) return 'cita';
     if (m.indexOf('sanidad') > -1 || m.indexOf('vacuna') > -1 || m.indexOf('desparasit') > -1 || m.indexOf('tratamiento') > -1 || m.indexOf('veterin') > -1) return 'sanidad';
     if (m.indexOf('repro') > -1 || m.indexOf('empadre') > -1 || m.indexOf('gestacion') > -1 || m.indexOf('parto') > -1 || m.indexOf('cria') > -1) return 'reproduccion';
-    if (m.indexOf('contab') > -1 || m.indexOf('ingreso') > -1 || m.indexOf('egreso') > -1 || m.indexOf('finanza') > -1 || m.indexOf('balance') > -1 || m.indexOf('dinero') > -1) return 'contabilidad';
+    if (m.indexOf('contab') > -1 || m.indexOf('ingreso') > -1 || m.indexOf('egreso') > -1 || m.indexOf('finanza') > -1) return 'contabilidad';
     if (m.indexOf('esquila') > -1 || m.indexOf('fibra') > -1 || m.indexOf('vellon') > -1 || m.indexOf('micronaje') > -1) return 'esquila';
     return 'default';
+  }
+
+  function generarRespuestaData(key) {
+    var d = getChatData();
+    var dAnimales = d && d.animales ? d.animales : [];
+    var dContab = d && d.contabilidad ? d.contabilidad : [];
+
+    if (key === 'animales_contar') {
+      if (dAnimales.length === 0) return 'No hay animales registrados aun. Ve a <b>Animales</b> y agrega tu primer animal.';
+      var agrup = {};
+      dAnimales.forEach(function(a) { var e = a.especie || 'Sin especie'; agrup[e] = (agrup[e]||0) + 1; });
+      var labels = Object.keys(agrup);
+      var values = Object.values(agrup);
+      var total = values.reduce(function(a,b){return a+b}, 0);
+      var sexos = { Macho: 0, Hembra: 0 }, otrosS = 0;
+      dAnimales.forEach(function(a) { if (a.sexo === 'Macho') sexos.Macho++; else if (a.sexo === 'Hembra') sexos.Hembra++; else otrosS++; });
+      return 'Tienes <b>' + total + ' animales</b> registrados:<br><br>' +
+        barChartHTML(labels, values, 'animales') +
+        '<div style="margin-top:6px;font-size:12px;color:#475569;">🐂 Machos: ' + sexos.Macho + '  |  🐄 Hembras: ' + sexos.Hembra + '</div>';
+    }
+
+    if (key === 'balance_resp') {
+      if (dContab.length === 0) return 'No hay movimientos contables registrados. Ve a <b>Contabilidad</b> para agregar ingresos y egresos.';
+      var ing = 0, egr = 0;
+      dContab.forEach(function(m) { var v = parseFloat(m.monto) || 0; if (m.tipo === 'Ingreso') ing += v; else egr += v; });
+      var bal = ing - egr;
+      var icono = bal >= 0 ? '📈' : '📉';
+      return 'Estado financiero actual:<br><br>' +
+        '<div style="background:#f0fdf4;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid #059669;"><span style="font-size:11px;color:#475569;">Ingresos</span><br><span style="font-size:16px;font-weight:700;color:#059669;">S/ ' + ing.toFixed(2) + '</span></div>' +
+        '<div style="background:#fef2f2;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid #ef4444;"><span style="font-size:11px;color:#475569;">Egresos</span><br><span style="font-size:16px;font-weight:700;color:#dc2626;">S/ ' + egr.toFixed(2) + '</span></div>' +
+        '<div style="background:' + (bal>=0?'#f0fdf4':'#fef2f2') + ';border-radius:8px;padding:10px;border-left:3px solid ' + (bal>=0?'#059669':'#ef4444') + ';"><span style="font-size:11px;color:#475569;">Balance</span><br><span style="font-size:16px;font-weight:700;color:' + (bal>=0?'#059669':'#dc2626') + ';">S/ ' + bal.toFixed(2) + '</span></div>' +
+        '<div style="font-size:11px;color:#94a3b8;margin-top:6px;">' + icono + ' ' + dContab.length + ' movimientos registrados</div>';
+    }
+
+    if (key === 'alertas_resp') {
+      var dAlertas = d && d.alertasLista ? d.alertasLista : [];
+      if (dAlertas.length === 0) return 'No hay alertas registradas. Todo en orden ✅';
+      var activas = dAlertas.filter(function(a){return a.estado === 'En seguimiento' || a.estado === 'Derivado'}).length;
+      var criticas = dAlertas.filter(function(a){return a.nivel_urgencia === 'Critica' || a.nivel_urgencia === 'Alta'}).length;
+      var porUrg = {};
+      dAlertas.forEach(function(a){var u = a.nivel_urgencia || 'Sin nivel'; porUrg[u] = (porUrg[u]||0)+1;});
+      return 'Tienes <b>' + dAlertas.length + ' alertas</b> registradas, <b style="color:#dc2626;">' + activas + ' activas</b>.<br><br>' +
+        barChartHTML(Object.keys(porUrg), Object.values(porUrg), 'alertas') +
+        '<div style="font-size:12px;color:#475569;margin-top:4px;">🚨 Criticas/Alta: ' + criticas + '</div>';
+    }
+
+    if (key === 'esquila_resp') {
+      var dEsquila = d && d.esquila ? d.esquila : [];
+      if (dEsquila.length === 0) return 'No hay registros de esquila aun.';
+      var totalKg = 0, totalIng = 0;
+      dEsquila.forEach(function(e){ totalKg += parseFloat(e.peso_vellon_kg)||0; totalIng += parseFloat(e.ingreso_total)||0; });
+      var porCat = {};
+      dEsquila.forEach(function(e){ var c = e.categoria_fibra || 'Sin cat.'; porCat[c] = (porCat[c]||0)+1; });
+      return 'Registros de esquila: <b>' + dEsquila.length + '</b><br><br>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">' +
+          '<div style="background:#f0fdf4;border-radius:8px;padding:10px;text-align:center;border-left:3px solid #059669;"><span style="font-size:10px;color:#475569;">Fibra total</span><br><span style="font-size:15px;font-weight:700;color:#059669;">' + totalKg.toFixed(2) + ' kg</span></div>' +
+          '<div style="background:#fefce8;border-radius:8px;padding:10px;text-align:center;border-left:3px solid #f59e0b;"><span style="font-size:10px;color:#475569;">Ingreso total</span><br><span style="font-size:15px;font-weight:700;color:#d97706;">S/ ' + totalIng.toFixed(2) + '</span></div>' +
+        '</div>' +
+        '<div style="font-size:12px;color:#475569;">Por categoria:</div>' +
+        barChartHTML(Object.keys(porCat), Object.values(porCat), 'esquilas');
+    }
+
+    if (key === 'resumen') {
+      var totalAnimales = dAnimales.length;
+      var totalAlertas = d && d.alertas ? d.alertas : 0;
+      var totalZoo = d && d.zootecnistas ? d.zootecnistas.length : 0;
+      var ing2 = 0, egr2 = 0;
+      dContab.forEach(function(m){ var v = parseFloat(m.monto)||0; if(m.tipo==='Ingreso') ing2+=v; else egr2+=v; });
+      var bal2 = ing2 - egr2;
+      var dEsquila2 = d && d.esquila ? d.esquila : [];
+      var ingEsq = dEsquila2.reduce(function(s,e){return s + (parseFloat(e.ingreso_total)||0);}, 0);
+
+      var animalAgrup = {};
+      dAnimales.forEach(function(a){ var e = a.especie || 'Otros'; animalAgrup[e] = (animalAgrup[e]||0)+1; });
+      var chartHtml = Object.keys(animalAgrup).length > 0 ? '<br><b>Animales por especie:</b>' + barChartHTML(Object.keys(animalAgrup), Object.values(animalAgrup), 'animales') : '';
+
+      return '📊 <b>Resumen del Predio</b><br><br>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">' +
+          '<div style="background:#f0fdf4;border-radius:8px;padding:10px;text-align:center;"><span style="font-size:10px;color:#475569;">Animales</span><br><span style="font-size:22px;font-weight:800;color:#059669;">' + totalAnimales + '</span></div>' +
+          '<div style="background:#fef2f2;border-radius:8px;padding:10px;text-align:center;"><span style="font-size:10px;color:#475569;">Alertas</span><br><span style="font-size:22px;font-weight:800;color:#dc2626;">' + totalAlertas + '</span></div>' +
+          '<div style="background:#fffbeb;border-radius:8px;padding:10px;text-align:center;"><span style="font-size:10px;color:#475569;">Ingreso fibra</span><br><span style="font-size:22px;font-weight:800;color:#d97706;">S/ ' + ingEsq.toFixed(0) + '</span></div>' +
+          '<div style="background:' + (bal2>=0?'#f0fdf4':'#fef2f2') + ';border-radius:8px;padding:10px;text-align:center;"><span style="font-size:10px;color:#475569;">Balance</span><br><span style="font-size:22px;font-weight:800;color:' + (bal2>=0?'#059669':'#dc2626') + ';">S/ ' + bal2.toFixed(0) + '</span></div>' +
+        '</div>' +
+        chartHtml +
+        '<div style="font-size:11px;color:#94a3b8;margin-top:6px;">👨‍⚕️ ' + totalZoo + ' especialistas disponibles</div>';
+    }
+
+    return null;
   }
 
   function sendMsg() {
@@ -81,7 +203,8 @@
     msgs.scrollTop = msgs.scrollHeight;
 
     var key = buscarRespuesta(msg);
-    var reply = respuestas[key] || respuestas['default'];
+    var dataReply = generarRespuestaData(key);
+    var reply = dataReply !== null ? dataReply : (respuestas[key] || respuestas['default']);
     var delay = 600 + Math.random() * 400;
 
     setTimeout(function() {

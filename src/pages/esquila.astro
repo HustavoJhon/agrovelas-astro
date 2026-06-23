@@ -11,7 +11,7 @@ let totalIngresos = 0;
 registros.forEach(e => totalIngresos += isNaN(parseFloat(e.ingreso_total)) ? 0 : parseFloat(e.ingreso_total));
 ---
 
-<DashboardLayout title="Esquila" userName={session.nombre} rol={session.rol} currentPage="esquila">
+<DashboardLayout title="Esquila" userName={session.nombre} rol={session.rol} currentPage="esquila" chatData={{ esquila: registros }}>
   <div class="page-header">
     <div><h1>Esquila</h1><p>Registro de fibra y esquila &middot; <span class="font-medium">S/ {totalIngresos.toFixed(2)} ingreso total</span></p></div>
     <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nueva Esquila</button>

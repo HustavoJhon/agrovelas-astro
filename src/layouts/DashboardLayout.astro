@@ -10,13 +10,15 @@ interface Props {
   userName: string;
   rol: string;
   currentPage: string;
+  chatData?: any;
 }
 
-const { title, userName, rol, currentPage } = Astro.props;
+const { title, userName, rol, currentPage, chatData } = Astro.props;
 ---
 
 <Layout title={`${title} - AGROVELAS`}>
   <Toast />
+  {chatData ? <script id="chatData" type="application/json">{JSON.stringify(chatData)}</script> : null}
   <ChatBot />
   <div class="flex min-h-screen bg-surface">
     <Sidebar rol={rol} currentPage={currentPage} />

@@ -35,7 +35,7 @@ const bateriaValues = markers.map((d: any) => parseInt(d.estado_bateria_pct));
 const bateriaAvg = Math.round(bateriaValues.reduce((a: number, b: number) => a + b, 0) / bateriaValues.length);
 ---
 
-<DashboardLayout title="Mapa IoT" userName={session.nombre} rol={session.rol} currentPage="iot">
+<DashboardLayout title="Mapa IoT" userName={session.nombre} rol={session.rol} currentPage="iot" chatData={{}}>
   <div class="page-header">
     <div><h1>Mapa IoT</h1><p>Geolocalizacion de dispositivos &middot; <span class="font-medium">{totalActivos} dispositivos activos</span></p></div>
     <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Dispositivo</button>

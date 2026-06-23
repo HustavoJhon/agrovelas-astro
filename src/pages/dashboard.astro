@@ -29,7 +29,7 @@ const tieneAlertas = (data?.alertasLista || []).length > 0;
 const balance = (ingresos - egresos).toFixed(0);
 ---
 
-<DashboardLayout title="Dashboard" userName={session.nombre} rol={session.rol} currentPage="dashboard">
+<DashboardLayout title="Dashboard" userName={session.nombre} rol={session.rol} currentPage="dashboard" chatData={{ animales: data?.animales, contabilidad: data?.contabilidad, alertasLista: data?.alertasLista, alertas: data?.alertas, zootecnistas: data?.zootecnistas, esquila: data?.esquila }}>
   {errorMsg ? (
     <div class="card p-5 bg-red-50 border-red-200 text-red-700 text-sm">
       <div class="flex items-center gap-2 font-medium mb-1"><i class="fas fa-exclamation-triangle"></i> Error de conexion</div>

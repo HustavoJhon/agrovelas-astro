@@ -12,7 +12,7 @@ registros.forEach(m => { const v = isNaN(parseFloat(m.monto))?0:parseFloat(m.mon
 const balPos = (ingresos-egresos)>=0;
 ---
 
-<DashboardLayout title="Contabilidad" userName={session.nombre} rol={session.rol} currentPage="contabilidad">
+<DashboardLayout title="Contabilidad" userName={session.nombre} rol={session.rol} currentPage="contabilidad" chatData={{ contabilidad: registros }}>
   <div class="page-header">
     <div><h1>Contabilidad</h1><p>Ingresos y egresos del predio &middot; <span class="font-medium">{registros.length} movimientos</span></p></div>
     <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Movimiento</button>
