@@ -9,6 +9,24 @@ if (!session) return Astro.redirect('/login');
 let animales: any[] = [];
 let errorMsg = '';
 try { animales = await readSheet('Animales'); } catch (e: any) { errorMsg = e.message; }
+
+const espCount: Record<string, number> = {};
+const estCount: Record<string, number> = {};
+const lotCount: Record<string, number> = {};
+for (const a of animales) {
+  espCount[a.especie] = (espCount[a.especie] || 0) + 1;
+  estCount[a.estado] = (estCount[a.estado] || 0) + 1;
+  lotCount[a.id_lote_cabana || 'Sin lote'] = (lotCount[a.id_lote_cabana || 'Sin lote'] || 0) + 1;
+}
+const labelsEspecies = Object.keys(espCount);
+const dataEspecies = Object.values(espCount);
+const labelsEstados = Object.keys(estCount);
+const dataEstados = Object.values(estCount);
+const labelsLotes = Object.keys(lotCount);
+const dataLotes = Object.values(lotCount);
+const tieneEspecies = labelsEspecies.length > 0;
+const tieneEstados = labelsEstados.length > 0;
+const tieneLotes = labelsLotes.length > 0;
 ---
 
 <DashboardLayout title="Animales" userName={session.nombre} rol={session.rol} currentPage="animales" chatData={{ animales }}>
@@ -32,32 +50,75 @@ try { animales = await readSheet('Animales'); } catch (e: any) { errorMsg = e.me
       </div>
     </div>
   ) : (
-    <div class="card-flush">
-      <div class="table-wrap">
-        <table class="table-modern">
-          <thead>
-            <tr><th>ID</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Fecha Nac.</th><th>Lote</th><th>Estado</th></tr>
-          </thead>
-          <tbody>
-            {animales.map((a: any) => {
-              const ec = a.estado === 'Activo' ? 'success' : a.estado === 'Vendido' ? 'warning' : 'danger';
-              return (
-                <tr>
-                  <td class="font-mono text-xs font-medium text-brand-700">{a.id_animal}</td>
-                  <td class="font-medium text-slate-800">{a.nombre || '-'}</td>
-                  <td><span class="badge-modern info">{a.especie}</span></td>
-                  <td class="text-slate-500">{a.raza || '-'}</td>
-                  <td class="text-slate-500">{a.sexo || '-'}</td>
-                  <td class="text-slate-400 text-xs">{a.fecha_nacimiento || '-'}</td>
-                  <td class="font-mono text-xs text-slate-400">{a.id_lote_cabana || '-'}</td>
-                  <td><span class={"badge-modern " + ec}>{a.estado}</span></td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div><h3>Por Especie</h3><p>Distribucion de especies</p></div>
+            {tieneEspecies ? <span class="badge-modern neutral">{animales.length} total</span> : ''}
+          </div>
+          <div class="chart-card-body">
+            {tieneEspecies ? (
+              <div class="chart-container"><canvas id="chartEspecies" data-labels={JSON.stringify(labelsEspecies)} data-values={JSON.stringify(dataEspecies)}></canvas></div>
+            ) : (
+              <div class="empty-chart"><div class="empty-icon"><i class="fas fa-chart-pie"></i></div><p class="empty-title">Sin datos</p><p class="empty-desc">Registra animales para ver la distribucion por especie.</p></div>
+            )}
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div><h3>Por Estado</h3><p>Activo, vendido, fallecido...</p></div>
+            {tieneEstados ? <span class="badge-modern neutral">{dataEstados.reduce((a: number, b: number) => a + b, 0)} total</span> : ''}
+          </div>
+          <div class="chart-card-body">
+            {tieneEstados ? (
+              <div class="chart-container"><canvas id="chartEstados" data-labels={JSON.stringify(labelsEstados)} data-values={JSON.stringify(dataEstados)}></canvas></div>
+            ) : (
+              <div class="empty-chart"><div class="empty-icon"><i class="fas fa-chart-pie"></i></div><p class="empty-title">Sin datos</p><p class="empty-desc">No hay animales con estado registrado.</p></div>
+            )}
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div><h3>Por Lote</h3><p>Distribucion por lote o cabana</p></div>
+            {tieneLotes ? <span class="badge-modern neutral">{dataLotes.reduce((a: number, b: number) => a + b, 0)} total</span> : ''}
+          </div>
+          <div class="chart-card-body">
+            {tieneLotes ? (
+              <div class="chart-container"><canvas id="chartLotes" data-labels={JSON.stringify(labelsLotes)} data-values={JSON.stringify(dataLotes)}></canvas></div>
+            ) : (
+              <div class="empty-chart"><div class="empty-icon"><i class="fas fa-chart-bar"></i></div><p class="empty-title">Sin datos</p><p class="empty-desc">No hay animales asignados a lotes.</p></div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+      <div class="card-flush">
+        <div class="table-wrap">
+          <table class="table-modern">
+            <thead>
+              <tr><th>ID</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Fecha Nac.</th><th>Lote</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              {animales.map((a: any) => {
+                const ec = a.estado === 'Activo' ? 'success' : a.estado === 'Vendido' ? 'warning' : 'danger';
+                return (
+                  <tr>
+                    <td class="font-mono text-xs font-medium text-brand-700">{a.id_animal}</td>
+                    <td class="font-medium text-slate-800">{a.nombre || '-'}</td>
+                    <td><span class="badge-modern info">{a.especie}</span></td>
+                    <td class="text-slate-500">{a.raza || '-'}</td>
+                    <td class="text-slate-500">{a.sexo || '-'}</td>
+                    <td class="text-slate-400 text-xs">{a.fecha_nacimiento || '-'}</td>
+                    <td class="font-mono text-xs text-slate-400">{a.id_lote_cabana || '-'}</td>
+                    <td><span class={"badge-modern " + ec}>{a.estado}</span></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
   )}
 
   <div id="animalModal" class="modal-backdrop hidden">
@@ -113,4 +174,48 @@ try { animales = await readSheet('Animales'); } catch (e: any) { errorMsg = e.me
       .then(function(d) { if (d.error) { showToast(d.error, 'error'); return; } cerrarModalAnimal(); showToast('Animal registrado: ' + d.id_animal, 'success'); setTimeout(function(){ location.reload(); }, 500); })
       .catch(function() { showToast('Error de conexion', 'error'); });
   });
+</script>
+
+<script>
+  import Chart from 'chart.js/auto';
+
+  const colors = ['#059669','#3b82f6','#f59e0b','#8b5cf6','#ef4444','#10b981','#ec4899'];
+
+  const c1 = document.getElementById('chartEspecies') as HTMLCanvasElement;
+  if (c1) {
+    new Chart(c1, {
+      type: 'pie',
+      data: {
+        labels: JSON.parse(c1.dataset.labels || '[]'),
+        datasets: [{ data: JSON.parse(c1.dataset.values || '[]'), backgroundColor: colors }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { padding: 16, usePointStyle: true, pointStyleWidth: 10, font: { family: 'Inter, system-ui, sans-serif', size: 11 } } } } }
+    });
+  }
+
+  const c2 = document.getElementById('chartEstados') as HTMLCanvasElement;
+  if (c2) {
+    new Chart(c2, {
+      type: 'doughnut',
+      data: {
+        labels: JSON.parse(c2.dataset.labels || '[]'),
+        datasets: [{ data: JSON.parse(c2.dataset.values || '[]'), backgroundColor: ['#059669','#f59e0b','#ef4444','#64748b','#8b5cf6'], borderWidth: 0 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right', labels: { padding: 16, usePointStyle: true, pointStyleWidth: 10, font: { family: 'Inter, system-ui, sans-serif', size: 11 } } } } }
+    });
+  }
+
+  const c3 = document.getElementById('chartLotes') as HTMLCanvasElement;
+  if (c3) {
+    const lotLabels = JSON.parse(c3.dataset.labels || '[]');
+    const lotValues = JSON.parse(c3.dataset.values || '[]');
+    new Chart(c3, {
+      type: 'bar',
+      data: {
+        labels: lotLabels,
+        datasets: [{ data: lotValues, backgroundColor: colors.slice(0, lotLabels.length), borderRadius: 6, borderSkipped: false }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false }, ticks: { font: { family: 'Inter, system-ui, sans-serif', size: 10 } } } } }
+    });
+  }
 </script>
