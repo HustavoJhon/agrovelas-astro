@@ -4,15 +4,18 @@ import path from 'node:path';
 import 'dotenv/config';
 import { sha256 } from './utils';
 
-const CREDS_PATH = path.resolve(process.cwd(), 'google-credentials.json');
-
 function loadCredentials() {
-  if (!fs.existsSync(CREDS_PATH)) {
+  const envCreds = process.env.GOOGLE_CREDENTIALS_JSON;
+  if (envCreds) {
+    return JSON.parse(Buffer.from(envCreds, 'base64').toString('utf-8'));
+  }
+  const credsPath = path.resolve(process.cwd(), 'google-credentials.json');
+  if (!fs.existsSync(credsPath)) {
     throw new Error(
       'google-credentials.json no encontrado. Sigue la guia en CONEXION.md para crearlo.'
     );
   }
-  const raw = fs.readFileSync(CREDS_PATH, 'utf-8');
+  const raw = fs.readFileSync(credsPath, 'utf-8');
   return JSON.parse(raw);
 }
 
