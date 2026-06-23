@@ -5,53 +5,232 @@ import { readSheet } from '../lib/sheets';
 
 const session = getSession(Astro.cookies);
 if (!session) return Astro.redirect('/login');
+
 let dispositivos: any[] = [];
-try { const raw = await readSheet('IoT_Dispositivos'); dispositivos = raw.filter(d => d.ultima_latitud && d.ultima_longitud); } catch (e: any) {}
+try { dispositivos = await readSheet('IoT_Dispositivos'); } catch (e: any) {}
+
+const demoDevices = [
+  { id_dispositivo: 'IOT-DEMO-01', id_animal: 'ANI-00001 - Luna', tipo_dispositivo: 'Collar GPS', codigo_dispositivo: 'ALP-GPS-001', estado_bateria_pct: '85', estado: 'Activo', ultima_latitud: '-14.7950', ultima_longitud: '-71.4050', fecha_ultima_lectura: 'hace 2 min', especie: 'Alpaca' },
+  { id_dispositivo: 'IOT-DEMO-02', id_animal: 'ANI-00002 - Inti', tipo_dispositivo: 'Collar GPS', codigo_dispositivo: 'ALP-GPS-002', estado_bateria_pct: '72', estado: 'Activo', ultima_latitud: '-14.7980', ultima_longitud: '-71.4080', fecha_ultima_lectura: 'hace 5 min', especie: 'Alpaca' },
+  { id_dispositivo: 'IOT-DEMO-03', id_animal: 'ANI-00003 - Wayra', tipo_dispositivo: 'Collar GPS', codigo_dispositivo: 'ALP-SUR-001', estado_bateria_pct: '90', estado: 'Activo', ultima_latitud: '-14.7930', ultima_longitud: '-71.4020', fecha_ultima_lectura: 'hace 1 min', especie: 'Alpaca Suri' },
+  { id_dispositivo: 'IOT-DEMO-04', id_animal: 'ANI-00005 - Killa', tipo_dispositivo: 'Collar GPS', codigo_dispositivo: 'ALP-GPS-004', estado_bateria_pct: '45', estado: 'Activo', ultima_latitud: '-14.7960', ultima_longitud: '-71.4030', fecha_ultima_lectura: 'hace 12 min', especie: 'Alpaca' },
+  { id_dispositivo: 'IOT-DEMO-05', id_animal: 'ANI-00004 - Puku', tipo_dispositivo: 'Collar GPS', codigo_dispositivo: 'LLA-GPS-001', estado_bateria_pct: '60', estado: 'Activo', ultima_latitud: '-14.8100', ultima_longitud: '-71.4200', fecha_ultima_lectura: 'hace 8 min', especie: 'Llama' },
+  { id_dispositivo: 'IOT-DEMO-06', id_animal: 'ANI-00008 - Run Run', tipo_dispositivo: 'Sensor LoRa', codigo_dispositivo: 'ALP-LOR-001', estado_bateria_pct: '30', estado: 'Activo', ultima_latitud: '-14.7920', ultima_longitud: '-71.4120', fecha_ultima_lectura: 'hace 20 min', especie: 'Alpaca Suri' },
+  { id_dispositivo: 'IOT-DEMO-07', id_animal: 'ANI-00006 - Pachamama', tipo_dispositivo: 'Collar GPS', codigo_dispositivo: 'OVE-GPS-001', estado_bateria_pct: '95', estado: 'Activo', ultima_latitud: '-14.7880', ultima_longitud: '-71.3950', fecha_ultima_lectura: 'hace 3 min', especie: 'Oveja' },
+  { id_dispositivo: 'IOT-DEMO-08', id_animal: 'ANI-00009 - Michi', tipo_dispositivo: 'Sensor LoRa', codigo_dispositivo: 'LLA-LOR-001', estado_bateria_pct: '55', estado: 'Activo', ultima_latitud: '-14.8150', ultima_longitud: '-71.4250', fecha_ultima_lectura: 'hace 15 min', especie: 'Llama' },
+  { id_dispositivo: 'IOT-DEMO-09', id_animal: 'ANI-00007 - Qori', tipo_dispositivo: 'Collar GPS', codigo_dispositivo: 'ALP-GPS-007', estado_bateria_pct: '78', estado: 'Activo', ultima_latitud: '-14.8000', ultima_longitud: '-71.3980', fecha_ultima_lectura: 'hace 6 min', especie: 'Alpaca' },
+  { id_dispositivo: 'IOT-DEMO-10', id_animal: 'ANI-00010 - Sol', tipo_dispositivo: 'Caravana RFID', codigo_dispositivo: 'RFID-ALP-010', estado_bateria_pct: '100', estado: 'Activo', ultima_latitud: '-14.7940', ultima_longitud: '-71.4040', fecha_ultima_lectura: 'hace 1 min', especie: 'Alpaca' },
+];
+
+const hasRealData = dispositivos.length > 0 && dispositivos[0]?.ultima_latitud;
+const markers = hasRealData ? dispositivos : demoDevices;
+const totalActivos = markers.length;
+const especiesUnicas = [...new Set(markers.map((d: any) => d.especie || d.tipo_dispositivo))];
+const bateriaBaja = markers.filter((d: any) => parseInt(d.estado_bateria_pct) < 50).length;
+const especieCount: Record<string, number> = {};
+markers.forEach((d: any) => { const e = d.especie || 'Otros'; especieCount[e] = (especieCount[e] || 0) + 1; });
+const especieLabels = Object.keys(especieCount);
+const especieValues = Object.values(especieCount);
+const bateriaValues = markers.map((d: any) => parseInt(d.estado_bateria_pct));
+const bateriaAvg = Math.round(bateriaValues.reduce((a: number, b: number) => a + b, 0) / bateriaValues.length);
 ---
 
 <DashboardLayout title="Mapa IoT" userName={session.nombre} rol={session.rol} currentPage="iot">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-    <div><h1 class="text-2xl font-bold text-slate-900">Mapa IoT</h1><p class="text-sm text-slate-500 mt-1">Geolocalizacion de dispositivos &middot; <span class="font-medium">{dispositivos.length} con senal activa</span></p></div>
+  <div class="page-header">
+    <div><h1>Mapa IoT</h1><p>Geolocalizacion de dispositivos &middot; <span class="font-medium">{totalActivos} dispositivos activos</span></p></div>
     <button onclick="abrirModal()" class="btn btn-primary cursor-pointer"><i class="fas fa-plus text-xs"></i> Nuevo Dispositivo</button>
   </div>
+
+  <div class="stagger grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="metric-card">
+      <div class="flex items-center justify-between mb-2">
+        <span class="metric-label">Dispositivos</span>
+        <div class="metric-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-satellite-dish"></i></div>
+      </div>
+      <div class="metric-value">{totalActivos}</div>
+      <div class="text-xs text-slate-400 mt-1">Con senal activa</div>
+    </div>
+    <div class="metric-card">
+      <div class="flex items-center justify-between mb-2">
+        <span class="metric-label">Bateria promedio</span>
+        <div class="metric-icon" style="background:#dcfce7;color:#059669;"><i class="fas fa-bolt"></i></div>
+      </div>
+      <div class="metric-value">{bateriaAvg}%</div>
+      <div class="text-xs text-slate-400 mt-1">Nivel general</div>
+    </div>
+    <div class="metric-card">
+      <div class="flex items-center justify-between mb-2">
+        <span class="metric-label">Bateria baja</span>
+        <div class="metric-icon" style="background:#fce4ec;color:#e11d48;"><i class="fas fa-exclamation"></i></div>
+      </div>
+      <div class="metric-value">{bateriaBaja}</div>
+      <div class="text-xs text-slate-400 mt-1">Requieren carga</div>
+    </div>
+    <div class="metric-card">
+      <div class="flex items-center justify-between mb-2">
+        <span class="metric-label">Especies</span>
+        <div class="metric-icon" style="background:#f3e8ff;color:#9333ea;"><i class="fas fa-paw"></i></div>
+      </div>
+      <div class="metric-value">{especiesUnicas.length}</div>
+      <div class="text-xs text-slate-400 mt-1">Monitoreadas</div>
+    </div>
+  </div>
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <div class="card overflow-hidden mb-6" style="height: 450px;">
+
+  <div class="card-flush mb-6" style="height: 480px;">
     <div id="map" style="width: 100%; height: 100%;"></div>
   </div>
-  <div class="card overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Dispositivo</th><th>Animal</th><th>Tipo</th><th>Codigo</th><th>Bateria</th><th>Ultima Lectura</th><th>Estado</th></tr></thead><tbody>
-    {dispositivos.length === 0 ? (
-      <tr><td colspan="7" class="text-center text-slate-400 py-8">Sin dispositivos con senal activa</td></tr>
-    ) : (
-      dispositivos.map((d: any) => {
-        const bc = parseInt(d.estado_bateria_pct)>50?'badge-success':parseInt(d.estado_bateria_pct)>20?'badge-warning':'badge-danger';
-        return (
-          <tr><td class="font-mono text-xs font-medium">{d.id_dispositivo}</td><td class="font-mono text-xs text-brand-700">{d.id_animal}</td><td><span class="badge badge-info">{d.tipo_dispositivo}</span></td><td class="text-xs">{d.codigo_dispositivo||'-'}</td><td><span class={"badge " + bc}>{d.estado_bateria_pct}%</span></td><td class="text-slate-400 text-xs">{d.fecha_ultima_lectura||'-'}</td><td class="text-xs">{d.estado}</td></tr>
-        );
-      })
-    )}
-  </tbody></table></div></div>
+
+  <div class="card-flush">
+    <div class="card-header-flush">
+      <div><h3 class="font-semibold text-slate-900 text-sm">Listado de dispositivos</h3><p class="text-xs text-slate-400 mt-0.5">{totalActivos} dispositivos registrados</p></div>
+    </div>
+    <div class="table-wrap">
+      <table class="table-modern">
+        <thead>
+          <tr><th>Dispositivo</th><th>Animal</th><th>Tipo</th><th>Codigo</th><th>Bateria</th><th>Ultima Lectura</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          {markers.map((d: any) => {
+            const bp = parseInt(d.estado_bateria_pct);
+            const bc = bp > 50 ? 'success' : bp > 20 ? 'warning' : 'danger';
+            return (
+              <tr>
+                <td class="font-mono text-xs font-medium text-slate-500">{d.id_dispositivo}</td>
+                <td class="font-mono text-xs font-medium text-brand-700">{d.id_animal || d.id_animal_relacionado || '-'}</td>
+                <td><span class="badge-modern info">{d.tipo_dispositivo}</span></td>
+                <td class="text-xs text-slate-400">{d.codigo_dispositivo || '-'}</td>
+                <td><span class={"badge-modern " + bc}>{bp}%</span></td>
+                <td class="text-xs text-slate-400">{d.fecha_ultima_lectura || '-'}</td>
+                <td class="text-xs"><span class="status-dot active">{d.estado}</span></td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <div id="modalIoT" class="modal-backdrop hidden">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-      <div class="border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl"><div><h3 class="text-lg font-bold text-slate-900">Nuevo Dispositivo IoT</h3></div><button onclick="cerrarModal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-times"></i></button></div>
-      <form id="iotForm" class="p-6 space-y-4">
-        <div><label class="form-label">ID del Animal *</label><input id="ioAni" class="form-input" required placeholder="ANI-00001" /></div>
-        <div><label class="form-label">Tipo de Dispositivo</label><select id="ioTip" class="form-input"><option>Collar GPS</option><option>Sensor LoRa</option><option>Caravana RFID</option></select></div>
-        <div><label class="form-label">Codigo del Dispositivo</label><input id="ioCod" class="form-input" placeholder="GPS-AL01" /></div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar</button></div>
+    <div class="modal-content max-w-md">
+      <div class="modal-header"><div><h3>Nuevo Dispositivo IoT</h3></div><button onclick="cerrarModal()" class="btn-close"><i class="fas fa-times"></i></button></div>
+      <form id="iotForm">
+        <div class="modal-body space-y-4">
+          <div><label class="form-label">ID del Animal *</label><input id="ioAni" class="form-input" required placeholder="ANI-00001" /></div>
+          <div><label class="form-label">Tipo de Dispositivo</label><select id="ioTip" class="form-input"><option>Collar GPS</option><option>Sensor LoRa</option><option>Caravana RFID</option></select></div>
+          <div><label class="form-label">Codigo del Dispositivo</label><input id="ioCod" class="form-input" placeholder="GPS-AL01" /></div>
+        </div>
+        <div class="modal-footer"><button type="button" onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button><button type="submit" class="btn btn-primary"><i class="fas fa-save text-xs"></i> Guardar</button></div>
       </form>
     </div>
   </div>
 </DashboardLayout>
 
-<script type="application/json" id="iotData">{JSON.stringify(dispositivos)}</script>
+<script type="application/json" id="iotData">{JSON.stringify(markers)}</script>
 <script is:inline>
-  var dispositivos = JSON.parse(document.getElementById('iotData').textContent);
-  function initMap() { if(typeof L==='undefined'){setTimeout(initMap,500);return} var m=L.map('map').setView([-13.532,-71.967],14); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap',maxZoom:19}).addTo(m); dispositivos.forEach(function(d){L.marker([parseFloat(d.ultima_latitud),parseFloat(d.ultima_longitud)]).addTo(m).bindPopup('<b>'+d.tipo_dispositivo+'</b><br>Animal: '+d.id_animal+'<br>Bateria: '+d.estado_bateria_pct+'%')}) }
-  document.addEventListener('DOMContentLoaded',initMap);
+  (function() {
+    var devices = JSON.parse(document.getElementById('iotData').textContent);
+
+    function getIcon(especie) {
+      var color;
+      if (especie && especie.toLowerCase().indexOf('sur') > -1) color = '#8b5cf6';
+      else if (especie && especie.toLowerCase().indexOf('llama') > -1) color = '#f59e0b';
+      else if (especie && especie.toLowerCase().indexOf('ovej') > -1) color = '#3b82f6';
+      else color = '#059669';
+
+      return L.divIcon({
+        html: '<div style="width:20px;height:20px;background:' + color + ';border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3),0 0 0 4px ' + color + '40;"></div>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+        className: ''
+      });
+    }
+
+    function getColor(especie) {
+      if (especie && especie.toLowerCase().indexOf('sur') > -1) return '#8b5cf6';
+      if (especie && especie.toLowerCase().indexOf('llama') > -1) return '#f59e0b';
+      if (especie && especie.toLowerCase().indexOf('ovej') > -1) return '#3b82f6';
+      return '#059669';
+    }
+
+    function initMap() {
+      if (typeof L === 'undefined') { setTimeout(initMap, 300); return; }
+
+      var map = L.map('map', {
+        center: [-14.800, -71.410],
+        zoom: 14,
+        zoomControl: true
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://openstreetmap.org">OSM</a>',
+        maxZoom: 19
+      }).addTo(map);
+
+      var bounds = [];
+      devices.forEach(function(d) {
+        var lat = parseFloat(d.ultima_latitud);
+        var lng = parseFloat(d.ultima_longitud);
+        if (isNaN(lat) || isNaN(lng)) return;
+
+        bounds.push([lat, lng]);
+        var marker = L.marker([lat, lng], { icon: getIcon(d.especie) }).addTo(map);
+
+        var bp = parseInt(d.estado_bateria_pct);
+        var batColor = bp > 50 ? '#22c55e' : bp > 20 ? '#f59e0b' : '#ef4444';
+        var batLabel = bp + '%';
+
+        var popupHtml =
+          '<div style="font-family:system-ui,sans-serif;min-width:180px;">' +
+            '<div style="font-weight:700;font-size:13px;color:#0f172a;margin-bottom:6px;">' + (d.id_animal || d.id_dispositivo) + '</div>' +
+            '<div style="display:grid;grid-template-columns:auto 1fr;gap:3px 8px;font-size:12px;color:#475569;">' +
+              '<span style="color:#94a3b8;">Tipo:</span><span>' + (d.tipo_dispositivo || '-') + '</span>' +
+              '<span style="color:#94a3b8;">Codigo:</span><span style="font-family:monospace;">' + (d.codigo_dispositivo || '-') + '</span>' +
+              '<span style="color:#94a3b8;">Bateria:</span><span style="font-weight:600;color:' + batColor + ';">' + batLabel + '</span>' +
+              (d.especie ? '<span style="color:#94a3b8;">Especie:</span><span>' + d.especie + '</span>' : '') +
+            '</div>' +
+          '</div>';
+
+        marker.bindPopup(popupHtml, { closeButton: true, offset: [0, -10] });
+      });
+
+      if (bounds.length > 0) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+
+      // Legend
+      var legend = L.control({ position: 'bottomright' });
+      legend.onAdd = function() {
+        var div = L.DomUtil.create('div', '');
+        div.style.background = 'white';
+        div.style.padding = '10px 12px';
+        div.style.borderRadius = '10px';
+        div.style.boxShadow = '0 4px 20px rgba(0,0,0,0.12)';
+        div.style.fontSize = '12px';
+        div.style.fontFamily = 'system-ui, sans-serif';
+        div.style.minWidth = '120px';
+        div.innerHTML =
+          '<div style="font-weight:600;color:#0f172a;margin-bottom:6px;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Especies</div>' +
+          '<div style="display:flex;flex-direction:column;gap:4px;">' +
+            '<div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#059669;border:2px solid white;box-shadow:0 0 0 2px #05966940;"></span><span style="color:#475569;">Alpaca Huacaya</span></div>' +
+            '<div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#8b5cf6;border:2px solid white;box-shadow:0 0 0 2px #8b5cf640;"></span><span style="color:#475569;">Alpaca Suri</span></div>' +
+            '<div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;border:2px solid white;box-shadow:0 0 0 2px #f59e0b40;"></span><span style="color:#475569;">Llama</span></div>' +
+            '<div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#3b82f6;border:2px solid white;box-shadow:0 0 0 2px #3b82f640;"></span><span style="color:#475569;">Oveja</span></div>' +
+          '</div>';
+        return div;
+      };
+      legend.addTo(map);
+
+      // Scale
+      L.control.scale({ imperial: false, metric: true, position: 'bottomleft' }).addTo(map);
+    }
+
+    document.addEventListener('DOMContentLoaded', initMap);
+  })();
+
   function abrirModal(){document.getElementById('modalIoT').classList.remove('hidden')}
   function cerrarModal(){document.getElementById('modalIoT').classList.add('hidden')}
-
   document.getElementById('iotForm').addEventListener('submit',function(e){e.preventDefault();var d={id_animal:document.getElementById('ioAni').value,tipo_dispositivo:document.getElementById('ioTip').value,codigo_dispositivo:document.getElementById('ioCod').value,estado_bateria_pct:100,estado:'Activo',fecha_instalacion:new Date().toISOString().split('T')[0]};if(!d.id_animal){showToast('Ingresa el ID del animal','error');return}fetch('/api/data/IoT_Dispositivos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(function(r){return r.json()}).then(function(d){if(d.error){showToast(d.error,'error');return}cerrarModal();showToast('Dispositivo registrado','success');setTimeout(function(){location.reload()},500)}).catch(function(){showToast('Error de conexion','error')})});
 </script>
