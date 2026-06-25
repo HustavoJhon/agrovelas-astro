@@ -27,8 +27,8 @@ const links = [
       ))}
     </div>
     <div class="nav-actions">
-      <a href="/login" class="nav-btn nav-btn-ghost">Ingresar</a>
-      <a href="/registro" class="nav-btn nav-btn-primary">Crear Cuenta</a>
+      <a href="/registro" class="nav-btn nav-btn-ghost">Crear Cuenta</a>
+      <a href="/login" class="nav-btn nav-btn-primary">Ingresar</a>
       <button id="menuBtn" class="nav-hamburger md-hide" onclick="toggleMenu()" aria-label="Menu">
         <i id="menuIcon" class="fas fa-bars"></i>
       </button>
@@ -40,8 +40,8 @@ const links = [
         <a href={l.href} class="mobile-link" onclick="toggleMenu()">{l.label}</a>
       ))}
       <div class="mobile-divider"></div>
-      <a href="/login" class="mobile-link mobile-link-btn" onclick="toggleMenu()">Ingresar</a>
-      <a href="/registro" class="mobile-link mobile-link-cta" onclick="toggleMenu()">Crear Cuenta</a>
+      <a href="/registro" class="mobile-link mobile-link-btn" onclick="toggleMenu()">Crear Cuenta</a>
+      <a href="/login" class="mobile-link mobile-link-cta" onclick="toggleMenu()">Ingresar</a>
     </div>
   </div>
 </nav>
