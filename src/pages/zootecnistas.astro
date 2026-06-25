@@ -43,7 +43,7 @@ const especialidadColorTexto: Record<string, string> = {
   ) : zootecnistas.length === 0 ? (
     <div class="card"><div class="empty-state"><div class="empty-state-icon"><i class="fas fa-user-md"></i></div><h3>Sin zootecnistas registrados</h3><p>Los especialistas apareceran aqui cuando se registren en el sistema.</p></div></div>
   ) : (
-    <div class="stagger grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="stagger grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       {zootecnistas.map((z: any) => {
         const rating = parseFloat(z.calificacion_promedio) || 0;
         const fullStars = Math.round(rating);
@@ -53,24 +53,28 @@ const especialidadColorTexto: Record<string, string> = {
         const icono = especialidadIcono[z.especialidad] || 'fa-user-md';
         const colorTag = especialidadColorTexto[z.especialidad] || '#64748b';
         const iniciales = z.especialidad ? z.especialidad.split(' ').map((w: string) => w[0]).join('').substring(0, 2).toUpperCase() : 'ZO';
-        const fotoUrl = z.foto_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(z.especialidad || 'Zootecnista')}&background=059669&color=fff&size=128&bold=true`;
+        const nombreMostrar = z.nombre || z.especialidad || 'Especialista';
+        const fotoUrl = z.foto_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreMostrar)}&background=059669&color=fff&size=200&bold=true`;
+        const estadoColor = z.estado === 'Disponible' ? '#22c55e' : z.estado === 'Ocupado' ? '#f59e0b' : '#94a3b8';
         return (
-          <div class="card-flush stagger" style="animation-delay: 0.05s;">
-            <div class={`bg-gradient-to-r ${gradClass} px-6 py-5 text-white`}>
-              <div class="flex items-center gap-4">
-                <img src={fotoUrl} alt={z.especialidad} class="w-14 h-14 rounded-xl border-2 border-white/30 object-cover shrink-0" loading="lazy" />
-                <div class="min-w-0">
-                  <p class="font-bold text-[15px] leading-tight truncate">{z.especialidad || 'Especialista'}</p>
-                  <div class="flex items-center gap-1.5 mt-1">
-                    <span class="text-xs text-white/70">{z.anios_experiencia || 0} años</span>
-                    <span class="text-white/30">|</span>
-                    <span class="text-xs status-dot active" style="--dot-bg: #22c55e;">{z.estado || 'Disponible'}</span>
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden stagger" style="animation-delay: 0.05s;">
+            <div class="p-6">
+              <div class="flex items-start gap-4">
+                <div class="relative shrink-0">
+                  <img src={fotoUrl} alt={nombreMostrar} class="w-20 h-20 rounded-2xl border-2 border-slate-100 object-cover shadow-md" loading="lazy" />
+                  <span class="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 rounded-full border-2 border-white shadow-sm" style="background:{estadoColor};"></span>
+                </div>
+                <div class="min-w-0 flex-1 pt-0.5">
+                  <p class="font-bold text-[16px] text-slate-900 leading-tight truncate">{nombreMostrar}</p>
+                  <p class="text-xs text-slate-400 mt-0.5">{z.especialidad || 'Zootecnista'}</p>
+                  <div class="flex items-center gap-3 mt-2">
+                    <span class="text-xs text-slate-500"><i class="far fa-clock text-slate-400 mr-1"></i>{z.anios_experiencia || 0} años exp.</span>
+                    <span class="text-xs font-medium px-2 py-0.5 rounded-full" style="background:{estadoColor}15;color:{estadoColor};">{z.estado || 'Disponible'}</span>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="p-5 space-y-4">
-              <div class="flex items-center justify-between">
+
+              <div class="flex items-center justify-between mt-5 pt-4 border-t border-slate-100">
                 <div class="flex items-center gap-0.5">
                   {Array.from({ length: fullStars }).map(() => <i class="fas fa-star text-amber-400 text-xs"></i>)}
                   {hasHalf ? <i class="fas fa-star-half-alt text-amber-400 text-xs"></i> : ''}
@@ -79,31 +83,32 @@ const especialidadColorTexto: Record<string, string> = {
                 <span class="text-xs text-slate-400">{z.numero_calificaciones || 0} reseñas</span>
               </div>
 
-              <div class="space-y-2.5 text-sm">
+              <div class="mt-4 space-y-2.5">
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center shrink-0"><i class="fas fa-map-marker-alt text-brand-600 text-xs"></i></div>
-                  <span class="text-slate-600 truncate">{z.zona_cobertura || 'No especificada'}</span>
+                  <div class="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center shrink-0"><i class="fas fa-map-marker-alt text-brand-600 text-xs"></i></div>
+                  <span class="text-sm text-slate-600 truncate">{z.zona_cobertura || 'No especificada'}</span>
                 </div>
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0"><i class="fas fa-tag text-emerald-600 text-xs"></i></div>
-                  <span class="text-slate-600"><span class="font-semibold text-slate-800">S/ {z.tarifa_consulta || '0.00'}</span> / consulta</span>
+                  <div class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0"><i class="fas fa-tag text-emerald-600 text-xs"></i></div>
+                  <span class="text-sm text-slate-600"><span class="font-semibold text-slate-800">S/ {z.tarifa_consulta || '0.00'}</span> / consulta</span>
                 </div>
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0"><i class="fas fa-phone text-blue-600 text-xs"></i></div>
-                  <span class="text-slate-600">{z.telefono_contacto || 'No disponible'}</span>
+                  <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0"><i class="fas fa-phone text-blue-600 text-xs"></i></div>
+                  <span class="text-sm text-slate-600">{z.telefono_contacto || 'No disponible'}</span>
                 </div>
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center shrink-0"><i class="fas fa-envelope text-purple-600 text-xs"></i></div>
-                  <span class="text-slate-600 truncate">{z.correo_contacto || 'No disponible'}</span>
+                  <div class="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center shrink-0"><i class="fas fa-envelope text-purple-600 text-xs"></i></div>
+                  <span class="text-sm text-slate-600 truncate">{z.correo_contacto || 'No disponible'}</span>
                 </div>
               </div>
 
               {z.biografia ? (
-                <div class="bg-slate-50 rounded-lg p-3">
-                  <p class="text-xs text-slate-500 leading-relaxed">"{z.biografia}"</p>
+                <div class="mt-4 bg-slate-50 rounded-xl p-3.5">
+                  <p class="text-xs text-slate-500 leading-relaxed italic">"{z.biografia}"</p>
                 </div>
               ) : ''}
-
+            </div>
+            <div class="px-6 pb-6">
               <button onclick={"agendarCita('" + z.id_zootecnista + "')"} class="btn btn-primary w-full cursor-pointer">
                 <i class="fas fa-calendar-plus text-xs"></i> Agendar Cita
               </button>
