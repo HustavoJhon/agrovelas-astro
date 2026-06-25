@@ -7,37 +7,41 @@ if (session) return Astro.redirect('/dashboard');
 ---
 
 <Layout title="AGROVELAS - Sistema de Gestion Ganadera Inteligente">
-  <nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:50;transition:all 0.3s ease;">
-    <div style="max-width:80rem;margin:0 auto;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;height:4rem;">
-      <a href="/" style="display:flex;align-items:center;gap:0.625rem;text-decoration:none;z-index:10;">
-        <div style="width:2.25rem;height:2.25rem;border-radius:0.75rem;background:linear-gradient(135deg,#059669,#10b981);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(5,150,105,0.3);">
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-icon">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
-        <span style="font-size:1.125rem;font-weight:700;color:white;letter-spacing:-0.025em;">AGROVELAS</span>
+        <span class="nav-logo-text">AGROVELAS</span>
       </a>
-      <div style="display:none;align-items:center;gap:2rem;" class="md:flex">
-        <a href="/" style="font-size:0.875rem;color:white;font-weight:500;text-decoration:none;">Inicio</a>
-        <a href="#modulos" style="font-size:0.875rem;color:rgba(255,255,255,0.7);text-decoration:none;">Funcionalidades</a>
-        <a href="#precios" style="font-size:0.875rem;color:rgba(255,255,255,0.7);text-decoration:none;">Precios</a>
-        <a href="/contacto" style="font-size:0.875rem;color:rgba(255,255,255,0.7);text-decoration:none;">Contacto</a>
-        <a href="#faq" style="font-size:0.875rem;color:rgba(255,255,255,0.7);text-decoration:none;">FAQ</a>
-        <a href="/acerca" style="font-size:0.875rem;color:rgba(255,255,255,0.7);text-decoration:none;">Nosotros</a>
+      <div class="nav-links md-flex">
+        <a href="/" class="nav-link active">Inicio</a>
+        <a href="#modulos" class="nav-link">Funcionalidades</a>
+        <a href="#precios" class="nav-link">Precios</a>
+        <a href="/contacto" class="nav-link">Contacto</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="/acerca" class="nav-link">Nosotros</a>
       </div>
-      <div style="display:flex;align-items:center;gap:0.75rem;">
-        <a href="/login" style="display:none;padding:0.375rem 0.75rem;border-radius:0.5rem;font-size:0.8125rem;font-weight:600;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);text-decoration:none;" class="sm:inline-flex">Ingresar</a>
-        <a href="/registro" style="padding:0.375rem 0.75rem;border-radius:0.5rem;font-size:0.8125rem;font-weight:600;background:white;color:#047857;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,0.15);">Crear Cuenta</a>
-        <button id="menuBtn" onclick="toggleMenu()" style="display:flex;width:2.25rem;height:2.25rem;border-radius:0.5rem;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:white;" class="md:hidden">
-          <i id="menuIcon" class="fas fa-bars" style="font-size:0.875rem;"></i>
+      <div class="nav-actions">
+        <a href="/login" class="nav-btn nav-btn-ghost">Ingresar</a>
+        <a href="/registro" class="nav-btn nav-btn-primary">Crear Cuenta</a>
+        <button id="menuBtn" class="nav-hamburger md-hide" onclick="toggleMenu()" aria-label="Menu">
+          <i id="menuIcon" class="fas fa-bars"></i>
         </button>
       </div>
     </div>
-    <div id="mobileMenu" style="position:fixed;inset:0;z-index:40;background:rgba(2,44,34,0.98);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;transform:translateY(-100%);opacity:0;transition:all 0.3s ease;pointer-events:none;">
-      <a href="/" style="font-size:1.25rem;color:white;font-weight:600;text-decoration:none;" onclick="toggleMenu()">Inicio</a>
-      <a href="#modulos" style="font-size:1.25rem;color:rgba(255,255,255,0.7);text-decoration:none;" onclick="toggleMenu()">Funcionalidades</a>
-      <a href="#precios" style="font-size:1.25rem;color:rgba(255,255,255,0.7);text-decoration:none;" onclick="toggleMenu()">Precios</a>
-      <a href="/contacto" style="font-size:1.25rem;color:rgba(255,255,255,0.7);text-decoration:none;" onclick="toggleMenu()">Contacto</a>
-      <a href="#faq" style="font-size:1.25rem;color:rgba(255,255,255,0.7);text-decoration:none;" onclick="toggleMenu()">FAQ</a>
-      <a href="/acerca" style="font-size:1.25rem;color:rgba(255,255,255,0.7);text-decoration:none;" onclick="toggleMenu()">Nosotros</a>
+    <div id="mobileMenu" class="mobile-menu">
+      <a href="/" class="mobile-link" onclick="toggleMenu()">Inicio</a>
+      <a href="#modulos" class="mobile-link" onclick="toggleMenu()">Funcionalidades</a>
+      <a href="#precios" class="mobile-link" onclick="toggleMenu()">Precios</a>
+      <a href="/contacto" class="mobile-link" onclick="toggleMenu()">Contacto</a>
+      <a href="#faq" class="mobile-link" onclick="toggleMenu()">FAQ</a>
+      <a href="/acerca" class="mobile-link" onclick="toggleMenu()">Nosotros</a>
+      <div class="mobile-actions">
+        <a href="/login" class="nav-btn nav-btn-ghost" onclick="toggleMenu()">Ingresar</a>
+        <a href="/registro" class="nav-btn nav-btn-primary" onclick="toggleMenu()">Crear Cuenta</a>
+      </div>
     </div>
   </nav>
 
@@ -433,9 +437,50 @@ if (session) return Astro.redirect('/dashboard');
 </Layout>
 
 <style>
-  #navbar.scrolled { background: rgba(2,44,34,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.06); }
-  #mobileMenu.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+  /* --- NAV --- */
+  #navbar { position:fixed;top:0;left:0;right:0;z-index:50;transition:all 0.3s ease; }
+  #navbar.scrolled { background:rgba(2,44,34,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06); }
+  .nav-inner { max-width:80rem;margin:0 auto;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;height:4rem; }
+  .nav-logo { display:flex;align-items:center;gap:0.625rem;text-decoration:none;z-index:10; }
+  .nav-logo-icon { width:2.25rem;height:2.25rem;border-radius:0.75rem;background:linear-gradient(135deg,#059669,#10b981);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(5,150,105,0.3); }
+  .nav-logo-text { font-size:1.125rem;font-weight:700;color:white;letter-spacing:-0.025em; }
+  .nav-links { display:none;align-items:center;gap:2rem; }
+  .md-flex { display:flex; }
+  .nav-link { font-size:0.875rem;color:rgba(255,255,255,0.7);font-weight:500;text-decoration:none;transition:color 0.2s;position:relative;padding:0.25rem 0; }
+  .nav-link:hover { color:white; }
+  .nav-link.active { color:white; }
+  .nav-link::after { content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:#4ade80;border-radius:2px;transition:width 0.2s; }
+  .nav-link:hover::after { width:100%; }
+  .nav-link.active::after { width:100%; }
+  .nav-actions { display:flex;align-items:center;gap:0.75rem; }
+  .nav-btn { padding:0.375rem 0.75rem;border-radius:0.5rem;font-size:0.8125rem;font-weight:600;text-decoration:none;transition:all 0.2s; }
+  .nav-btn-ghost { background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8); }
+  .nav-btn-ghost:hover { background:rgba(255,255,255,0.2);color:white; }
+  .nav-btn-primary { background:white;color:#047857;box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+  .nav-btn-primary:hover { background:#f0fdf4;transform:translateY(-1px); }
+  .nav-hamburger { display:flex;width:2.25rem;height:2.25rem;border-radius:0.5rem;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:white;font-size:0.875rem;transition:background 0.2s; }
+  .nav-hamburger:hover { background:rgba(255,255,255,0.2); }
+  .md-hide { display:flex; }
 
+  /* --- MOBILE MENU --- */
+  .mobile-menu { position:fixed;inset:0;z-index:40;background:rgba(2,44,34,0.98);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transform:translateY(-100%);opacity:0;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);pointer-events:none; }
+  .mobile-menu.open { transform:translateY(0);opacity:1;pointer-events:all; }
+  .mobile-link { font-size:1.125rem;color:rgba(255,255,255,0.7);font-weight:500;text-decoration:none;transition:color 0.2s;padding:0.5rem 1rem;border-radius:0.5rem; }
+  .mobile-link:hover { color:white;background:rgba(255,255,255,0.08); }
+  .mobile-actions { display:flex;flex-direction:column;gap:0.75rem;margin-top:1rem;width:16rem; }
+  .mobile-actions .nav-btn { text-align:center;padding:0.75rem; }
+
+  /* --- RESPONSIVE --- */
+  @media (min-width:768px) {
+    .md-flex { display:flex !important; }
+    .md-hide { display:none !important; }
+  }
+  @media (max-width:767px) {
+    .md-flex { display:none !important; }
+    .nav-btn-ghost { display:none; }
+  }
+
+  /* --- HERO --- */
   .hero-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: orbFloat 8s ease-in-out infinite; }
   @keyframes orbFloat { 0%,100% { transform: translateY(0) scale(1); } 33% { transform: translateY(-30px) scale(1.05); } 66% { transform: translateY(15px) scale(0.95); } }
 
@@ -452,10 +497,10 @@ if (session) return Astro.redirect('/dashboard');
 </style>
 
 <script is:inline>
-  window.addEventListener('scroll', function() { var n=document.getElementById('navbar'); if(n) { n.classList.toggle('scrolled', window.scrollY>20); } });
   function toggleMenu() { var m=document.getElementById('mobileMenu'),i=document.getElementById('menuIcon'); m.classList.toggle('open'); i.classList.toggle('fa-bars'); i.classList.toggle('fa-times'); }
   function toggleFAQ(b) { var i=b.closest('.faq-item'),a=i.querySelector('.faq-answer'),o=i.classList.contains('open'); document.querySelectorAll('.faq-item.open').forEach(function(e){e.classList.remove('open');e.querySelector('.faq-answer').classList.remove('open')}); i.classList.toggle('open',!o); a.classList.toggle('open',!o); }
   function animateCounters(){ document.querySelectorAll('.counter').forEach(function(e){ var t=parseInt(e.getAttribute('data-target')),c=0,s=Math.ceil(t/40),x=setInterval(function(){c+=s;if(c>=t){c=t;clearInterval(x)}e.textContent=c},30)}) }
   function reveal(){ document.querySelectorAll('.scroll-animate:not(.visible)').forEach(function(e){ if(e.getBoundingClientRect().top<window.innerHeight-80) e.classList.add('visible') }) }
   document.addEventListener('DOMContentLoaded',function(){ reveal(); var s=document.querySelector('#stats'),ob; if(s){ob=new IntersectionObserver(function(e){e.forEach(function(ee){if(ee.isIntersecting){animateCounters();ob.disconnect()}})},{threshold:0.3});ob.observe(s)} window.addEventListener('scroll',reveal) });
+  var nav=document.getElementById('navbar'); if(nav){ var ticking=false; window.addEventListener('scroll',function(){ if(!ticking){requestAnimationFrame(function(){nav.classList.toggle('scrolled',window.scrollY>20);ticking=false});ticking=true} }); }
 </script>
