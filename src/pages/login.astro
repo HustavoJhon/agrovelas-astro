@@ -39,6 +39,7 @@ if (session) return Astro.redirect('/dashboard');
             <input id="lPass" type="password" class="form-input" placeholder="Tu contrasena" required autocomplete="current-password" />
           </div>
           <button type="submit" class="btn btn-primary w-full btn-lg">Iniciar Sesion</button>
+          <button type="button" onclick="demoLogin()" class="btn btn-secondary w-full btn-lg" style="background:#f0fdf4;color:#047857;border:1px solid #bbf7d0;"><i class="fas fa-robot text-xs"></i> Ingresar con cuenta demo</button>
         </form>
         <p class="text-center text-sm text-slate-500 mt-6">No tienes cuenta? <a href="/registro" class="text-brand-600 font-semibold hover:text-brand-700 no-underline">Crear una cuenta</a></p>
         <p class="text-center mt-8"><a href="/" class="text-xs text-slate-400 hover:text-slate-600 no-underline"><i class="fas fa-arrow-left mr-1"></i> Volver al inicio</a></p>
@@ -50,5 +51,6 @@ if (session) return Astro.redirect('/dashboard');
 
 <script is:inline>
   function showToast(m,t){var e=document.getElementById('toast');if(!e)return;e.className='toast toast-'+t;e.innerHTML=m;requestAnimationFrame(function(){e.classList.add('show')});setTimeout(function(){e.classList.remove('show')},4000)}
+  function demoLogin(){document.getElementById('lLog').value='juan';document.getElementById('lPass').value='123456';document.querySelector('#loginForm button[type=submit]').click()}
   document.getElementById('loginForm').addEventListener('submit',function(ev){ev.preventDefault();var l=document.getElementById('lLog').value,p=document.getElementById('lPass').value;if(!l||!p){showToast('Completa todos los campos','error');return}fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({login:l,contrasena:p})}).then(function(r){return r.json()}).then(function(d){if(d.error){showToast(d.error,'error');return}showToast('Bienvenido '+d.usuario.nombre,'success');setTimeout(function(){window.location.href='/dashboard'},400)}).catch(function(){showToast('Error de conexion','error')})});
 </script>
