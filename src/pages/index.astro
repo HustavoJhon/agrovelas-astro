@@ -463,12 +463,14 @@ if (session) return Astro.redirect('/dashboard');
   .md-hide { display:flex; }
 
   /* --- MOBILE MENU --- */
-  .mobile-menu { position:fixed;inset:0;z-index:40;background:rgba(2,44,34,0.98);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transform:translateY(-100%);opacity:0;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);pointer-events:none; }
-  .mobile-menu.open { transform:translateY(0);opacity:1;pointer-events:all; }
-  .mobile-link { font-size:1.125rem;color:rgba(255,255,255,0.7);font-weight:500;text-decoration:none;transition:color 0.2s;padding:0.5rem 1rem;border-radius:0.5rem; }
+  .mobile-menu { position:fixed;inset:0;z-index:999;background:#022c22;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;opacity:0;visibility:hidden;transition:opacity 0.3s ease,visibility 0.3s ease; }
+  .mobile-menu.open { opacity:1;visibility:visible; }
+  .mobile-link { font-size:1.25rem;color:rgba(255,255,255,0.7);font-weight:500;text-decoration:none;transition:all 0.2s;padding:0.75rem 2rem;border-radius:0.5rem; }
   .mobile-link:hover { color:white;background:rgba(255,255,255,0.08); }
-  .mobile-actions { display:flex;flex-direction:column;gap:0.75rem;margin-top:1rem;width:16rem; }
-  .mobile-actions .nav-btn { text-align:center;padding:0.75rem; }
+  .mobile-link.active { color:white; }
+  .mobile-actions { display:flex;flex-direction:column;gap:1rem;margin-top:1rem;width:16rem; }
+  .mobile-actions .nav-btn { text-align:center;padding:0.75rem;font-size:0.9375rem; }
+  body.menu-open { overflow:hidden; }
 
   /* --- RESPONSIVE --- */
   @media (min-width:768px) {
@@ -500,7 +502,7 @@ if (session) return Astro.redirect('/dashboard');
 </style>
 
 <script is:inline>
-  function toggleMenu() { var m=document.getElementById('mobileMenu'),i=document.getElementById('menuIcon'); m.classList.toggle('open'); i.classList.toggle('fa-bars'); i.classList.toggle('fa-times'); }
+  function toggleMenu() { var m=document.getElementById('mobileMenu'),i=document.getElementById('menuIcon'),o=m.classList.contains('open'); m.classList.toggle('open'); i.classList.toggle('fa-bars'); i.classList.toggle('fa-times'); document.body.classList.toggle('menu-open',!o); }
   function toggleFAQ(b) { var i=b.closest('.faq-item'),a=i.querySelector('.faq-answer'),o=i.classList.contains('open'); document.querySelectorAll('.faq-item.open').forEach(function(e){e.classList.remove('open');e.querySelector('.faq-answer').classList.remove('open')}); i.classList.toggle('open',!o); a.classList.toggle('open',!o); }
   function animateCounters(){ document.querySelectorAll('.counter').forEach(function(e){ var t=parseInt(e.getAttribute('data-target')),c=0,s=Math.ceil(t/40),x=setInterval(function(){c+=s;if(c>=t){c=t;clearInterval(x)}e.textContent=c},30)}) }
   function reveal(){ document.querySelectorAll('.scroll-animate:not(.visible)').forEach(function(e){ if(e.getBoundingClientRect().top<window.innerHeight-80) e.classList.add('visible') }) }
