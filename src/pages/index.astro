@@ -69,33 +69,11 @@ if (session) return Astro.redirect('/dashboard');
           </div>
         </div>
 
-        <div style="display:none;align-items:center;justify-content:center;animation-delay:0.3s;" class="lg:flex anim-slide-right">
-          <div class="hero-image-frame" style="position:relative;width:100%;max-width:28rem;">
-            <div class="hero-ring" style="position:absolute;inset:-2rem;border-radius:4rem;background:conic-gradient(from 0deg, #10b981, #34d399, #059669, #047857, #10b981);opacity:0.15;filter:blur(30px);"></div>
-            <div style="position:absolute;inset:-1rem;background:linear-gradient(135deg,rgba(5,150,105,0.25),rgba(52,211,153,0.08));border-radius:3rem;filter:blur(50px);transform:translateZ(0);"></div>
-            <div style="position:relative;border-radius:2rem;overflow:hidden;border:1px solid rgba(255,255,255,0.12);box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
-              <img src="/images/hero-dashboard.png" alt="Dashboard de analitica ganadera" style="width:100%;height:auto;display:block;object-fit:cover;aspect-ratio:3/2;" loading="eager" />
-              <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(2,44,34,0.7) 0%,rgba(2,44,34,0.15) 40%,rgba(2,44,34,0.05) 100%);pointer-events:none;"></div>
-              <div style="position:absolute;bottom:0;left:0;right:0;padding:1.5rem;">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-                  <div class="hero-badge" style="border-radius:0.75rem;padding:0.625rem 0.875rem;background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:0.5rem;transform:translateY(0);opacity:0;animation:badgeIn 0.6s ease forwards;">
-                    <div style="width:2rem;height:2rem;border-radius:0.5rem;background:linear-gradient(135deg,#4ade80,#10b981);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);"><span style="color:white;font-weight:700;font-size:0.75rem;">22</span></div>
-                    <div><p style="color:white;font-weight:600;font-size:0.75rem;line-height:1.15;">Modulos</p><p style="color:rgba(255,255,255,0.5);font-size:0.625rem;">Integrados</p></div>
-                  </div>
-                  <div class="hero-badge" style="border-radius:0.75rem;padding:0.625rem 0.875rem;background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:0.5rem;transform:translateY(0);opacity:0;animation:badgeIn 0.6s ease 0.15s forwards;">
-                    <div style="width:2rem;height:2rem;border-radius:0.5rem;background:linear-gradient(135deg,#f59e0b,#ea580c);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);"><i class="fas fa-satellite-dish" style="color:white;font-size:0.75rem;"></i></div>
-                    <div><p style="color:white;font-weight:600;font-size:0.75rem;line-height:1.15;">IoT</p><p style="color:rgba(255,255,255,0.5);font-size:0.625rem;">Tiempo real</p></div>
-                  </div>
-                  <div class="hero-badge" style="border-radius:0.75rem;padding:0.625rem 0.875rem;background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:0.5rem;transform:translateY(0);opacity:0;animation:badgeIn 0.6s ease 0.3s forwards;">
-                    <div style="width:2rem;height:2rem;border-radius:0.5rem;background:linear-gradient(135deg,#60a5fa,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);"><i class="fas fa-qrcode" style="color:white;font-size:0.75rem;"></i></div>
-                    <div><p style="color:white;font-weight:600;font-size:0.75rem;line-height:1.15;">QR</p><p style="color:rgba(255,255,255,0.5);font-size:0.625rem;">Trazabilidad</p></div>
-                  </div>
-                  <div class="hero-badge" style="border-radius:0.75rem;padding:0.625rem 0.875rem;background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:0.5rem;transform:translateY(0);opacity:0;animation:badgeIn 0.6s ease 0.45s forwards;">
-                    <div style="width:2rem;height:2rem;border-radius:0.5rem;background:linear-gradient(135deg,#34d399,#0d9488);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);"><i class="fas fa-coins" style="color:white;font-size:0.75rem;"></i></div>
-                    <div><p style="color:white;font-weight:600;font-size:0.75rem;line-height:1.15;">S/</p><p style="color:rgba(255,255,255,0.5);font-size:0.625rem;">Finanzas</p></div>
-                  </div>
-                </div>
-              </div>
+        <div style="display:none;align-items:center;justify-content:center;animation-delay:0.3s;padding:2rem 0;" class="lg:flex anim-slide-right">
+          <div class="hero-image-frame" style="position:relative;width:100%;max-width:30rem;perspective:1000px;">
+            <div style="position:absolute;inset:-1.5rem;background:radial-gradient(ellipse at center,rgba(5,150,105,0.2) 0%,transparent 70%);border-radius:50%;filter:blur(60px);"></div>
+            <div class="hero-floating" style="position:relative;border-radius:1.5rem;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.45),0 0 0 1px rgba(255,255,255,0.08);transform:rotateY(-4deg) rotateX(2deg);">
+              <img src="/images/hero-dashboard.png" alt="Dashboard de analitica ganadera" style="width:100%;height:auto;display:block;object-fit:cover;" loading="eager" />
             </div>
           </div>
         </div>
@@ -432,14 +410,9 @@ if (session) return Astro.redirect('/dashboard');
 
   .hero-image-frame { animation:imageReveal 0.8s ease-out forwards;opacity:0; }
   @keyframes imageReveal { 0% { opacity:0;transform:scale(0.92) translateY(20px); } 100% { opacity:1;transform:scale(1) translateY(0); } }
-  .hero-image-frame:hover { animation:float 3s ease-in-out infinite; }
-  @keyframes float { 0%,100% { transform:translateY(0px); } 50% { transform:translateY(-8px); } }
 
-  .hero-ring { animation:ringSpin 6s linear infinite; }
-  @keyframes ringSpin { 0% { transform:rotate(0deg) scale(1); } 100% { transform:rotate(360deg) scale(1); } }
-
-  .hero-badge { animation:badgeIn 0.6s ease forwards; }
-  @keyframes badgeIn { 0% { opacity:0;transform:translateY(12px); } 100% { opacity:1;transform:translateY(0); } }
+  .hero-floating { animation:float3d 4s ease-in-out infinite; }
+  @keyframes float3d { 0%,100% { transform:rotateY(-4deg) rotateX(2deg) translateY(0px); } 50% { transform:rotateY(-2deg) rotateX(1deg) translateY(-10px); } }
 
   .scroll-animate { opacity: 0; transform: translateY(32px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
   .scroll-animate.visible { opacity: 1; transform: translateY(0); }
