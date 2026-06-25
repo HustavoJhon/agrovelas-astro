@@ -16,9 +16,7 @@ const links = [
 <nav id="navbar">
   <div class="nav-inner">
     <a href="/" class="nav-logo">
-      <div class="nav-logo-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      </div>
+      <img src="/images/logo.png" alt="AGROVELAS" class="nav-logo-img" />
       <span class="nav-logo-text">AGROVELAS</span>
     </a>
     <div class="nav-links md-flex">
@@ -55,7 +53,7 @@ const links = [
   #navbar.scrolled { background:rgba(2,44,34,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06); }
   .nav-inner { max-width:80rem;margin:0 auto;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;height:4rem; }
   .nav-logo { display:flex;align-items:center;gap:0.625rem;text-decoration:none;z-index:10; }
-  .nav-logo-icon { width:2.25rem;height:2.25rem;border-radius:0.75rem;background:linear-gradient(135deg,#059669,#10b981);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(5,150,105,0.3); }
+  .nav-logo-img { width:2.25rem;height:2.25rem;border-radius:0.75rem;object-fit:cover;box-shadow:0 4px 12px rgba(5,150,105,0.3); }
   .nav-logo-text { font-size:1.125rem;font-weight:700;color:white;letter-spacing:-0.025em; }
   .nav-links { display:none;align-items:center;gap:2rem; }
   .md-flex { display:flex; }
