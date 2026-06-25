@@ -62,11 +62,9 @@ const sections = [
     ))}
 
     <div class="border-t border-slate-100 pt-3">
-      <form action="/api/auth/logout" method="POST">
-        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-rose-600 hover:bg-rose-50 transition-all cursor-pointer">
-          <i class="fas fa-sign-out-alt w-4 text-center"></i>Cerrar Sesion
-        </button>
-      </form>
+      <a href="/api/auth/logout" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-rose-600 hover:bg-rose-50 transition-all no-underline">
+        <i class="fas fa-sign-out-alt w-4 text-center"></i>Cerrar Sesion
+      </a>
     </div>
   </nav>
 </aside>
