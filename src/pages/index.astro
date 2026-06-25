@@ -476,8 +476,11 @@ if (session) return Astro.redirect('/dashboard');
     .md-hide { display:none !important; }
   }
   @media (max-width:767px) {
+    #navbar { background:rgba(2,44,34,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06); }
     .md-flex { display:none !important; }
     .nav-btn-ghost { display:none; }
+    .nav-inner { height:3.5rem; }
+    .mobile-actions { width:100%;padding:0 1.5rem; }
   }
 
   /* --- HERO --- */
