@@ -1,14 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import LandingNav from '../components/LandingNav.astro';
+import LandingFooter from '../components/LandingFooter.astro';
 ---
 
 <Layout title="Contacto - AGROVELAS">
-  <nav class="sticky top-0 z-50 bg-brand-950/95 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
-      <a href="/" class="flex items-center gap-3 no-underline"><div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg></div><span class="text-sm font-bold text-white">AGROVELAS</span></a>
-      <a href="/" class="text-sm text-white/70 hover:text-white no-underline"><i class="fas fa-arrow-left mr-1"></i> Volver al inicio</a>
-    </div>
-  </nav>
+  <LandingNav current="/contacto" />
 
   <section class="py-20" style="background: linear-gradient(160deg, #022c22 0%, #064e3b 40%, #047857 100%);">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
@@ -52,12 +49,7 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <footer class="bg-slate-900 text-slate-400 py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <div class="flex items-center gap-3 justify-center mb-4"><div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg></div><span class="text-sm font-bold text-white">AGROVELAS</span></div>
-      <p class="text-xs">&copy; 2026 AGROVELAS. Cusco, Peru.</p>
-    </div>
-  </footer>
+  <LandingFooter />
 </Layout>
 
 <script is:inline>
