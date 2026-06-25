@@ -1347,6 +1347,8 @@ select.form-input {
 .chart-card-body { padding: 1rem 1.25rem; }
 .chart-container { height: 250px; position: relative; }
 
+@keyframes shimmerBar { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+
 .empty-chart {
   display: flex;
   flex-direction: column;
