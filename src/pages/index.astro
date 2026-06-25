@@ -17,6 +17,26 @@ if (session) return Astro.redirect('/dashboard');
       <div class="hero-orb" style="width:600px;height:600px;top:-150px;right:-100px;background:#059669;"></div>
       <div class="hero-orb" style="width:400px;height:400px;bottom:-100px;left:-80px;background:#34d399;animation-direction:reverse;animation-duration:10s;"></div>
       <div class="hero-orb" style="width:300px;height:300px;top:40%;left:50%;background:#10b981;opacity:0.2;animation-duration:12s;"></div>
+      <!-- animated pattern overlay -->
+      <svg class="hero-pattern" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.06;" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="heroGrid" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="white" stroke-width="1"/>
+            <circle cx="40" cy="40" r="3" fill="white" opacity="0.5"/>
+          </pattern>
+          <pattern id="heroDots" width="24" height="24" patternUnits="userSpaceOnUse">
+            <circle cx="12" cy="12" r="1.5" fill="white"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#heroGrid)"/>
+        <rect width="100%" height="100%" fill="url(#heroDots)" opacity="0.5"/>
+      </svg>
+      <!-- floating particles -->
+      <div class="hero-particle" style="width:6px;height:6px;top:15%;left:10%;background:#86efac;animation-delay:0s;"></div>
+      <div class="hero-particle" style="width:4px;height:4px;top:25%;left:30%;background:#4ade80;animation-delay:1.5s;"></div>
+      <div class="hero-particle" style="width:5px;height:5px;top:60%;left:8%;background:#a7f3d0;animation-delay:3s;"></div>
+      <div class="hero-particle" style="width:3px;height:3px;top:70%;left:25%;background:#86efac;animation-delay:0.8s;"></div>
+      <div class="hero-particle" style="width:7px;height:7px;top:35%;left:5%;background:#6ee7b7;animation-delay:2.2s;"></div>
     </div>
 
     <div style="position:relative;z-index:10;max-width:80rem;margin:0 auto;padding:8rem 1rem;width:100%;" class="sm:px-6 lg:px-8">
@@ -49,35 +69,32 @@ if (session) return Astro.redirect('/dashboard');
           </div>
         </div>
 
-        <div style="display:none;align-items:center;justify-content:center;" class="lg:flex anim-slide-right" style="animation-delay:0.3s;">
-          <div style="position:relative;width:100%;max-width:28rem;">
-            <div style="position:absolute;inset:-1.5rem;background:linear-gradient(to right,rgba(5,150,105,0.2),rgba(52,211,153,0.1));border-radius:3rem;filter:blur(40px);"></div>
-            <div style="position:relative;border-radius:2rem;padding:2rem;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-                <div style="border-radius:1rem;padding:1.5rem;text-align:center;background:rgba(255,255,255,0.1);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1);">
-                  <div style="width:3rem;height:3rem;border-radius:0.75rem;background:linear-gradient(135deg,#4ade80,#10b981);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;box-shadow:0 4px 12px rgba(0,0,0,0.2);"><span style="color:white;font-weight:700;font-size:1.125rem;">22</span></div>
-                  <p style="color:white;font-weight:600;font-size:0.875rem;">Modulos</p>
-                  <p style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin-top:0.125rem;">Integrados</p>
+        <div style="display:none;align-items:center;justify-content:center;animation-delay:0.3s;" class="lg:flex anim-slide-right">
+          <div class="hero-image-frame" style="position:relative;width:100%;max-width:28rem;">
+            <div class="hero-ring" style="position:absolute;inset:-2rem;border-radius:4rem;background:conic-gradient(from 0deg, #10b981, #34d399, #059669, #047857, #10b981);opacity:0.15;filter:blur(30px);"></div>
+            <div style="position:absolute;inset:-1rem;background:linear-gradient(135deg,rgba(5,150,105,0.25),rgba(52,211,153,0.08));border-radius:3rem;filter:blur(50px);transform:translateZ(0);"></div>
+            <div style="position:relative;border-radius:2rem;overflow:hidden;border:1px solid rgba(255,255,255,0.12);box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+              <img src="/images/hero-dashboard.png" alt="Dashboard de analitica ganadera" style="width:100%;height:auto;display:block;object-fit:cover;aspect-ratio:3/2;" loading="eager" />
+              <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(2,44,34,0.7) 0%,rgba(2,44,34,0.15) 40%,rgba(2,44,34,0.05) 100%);pointer-events:none;"></div>
+              <div style="position:absolute;bottom:0;left:0;right:0;padding:1.5rem;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                  <div class="hero-badge" style="border-radius:0.75rem;padding:0.625rem 0.875rem;background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:0.5rem;transform:translateY(0);opacity:0;animation:badgeIn 0.6s ease forwards;">
+                    <div style="width:2rem;height:2rem;border-radius:0.5rem;background:linear-gradient(135deg,#4ade80,#10b981);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);"><span style="color:white;font-weight:700;font-size:0.75rem;">22</span></div>
+                    <div><p style="color:white;font-weight:600;font-size:0.75rem;line-height:1.15;">Modulos</p><p style="color:rgba(255,255,255,0.5);font-size:0.625rem;">Integrados</p></div>
+                  </div>
+                  <div class="hero-badge" style="border-radius:0.75rem;padding:0.625rem 0.875rem;background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:0.5rem;transform:translateY(0);opacity:0;animation:badgeIn 0.6s ease 0.15s forwards;">
+                    <div style="width:2rem;height:2rem;border-radius:0.5rem;background:linear-gradient(135deg,#f59e0b,#ea580c);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);"><i class="fas fa-satellite-dish" style="color:white;font-size:0.75rem;"></i></div>
+                    <div><p style="color:white;font-weight:600;font-size:0.75rem;line-height:1.15;">IoT</p><p style="color:rgba(255,255,255,0.5);font-size:0.625rem;">Tiempo real</p></div>
+                  </div>
+                  <div class="hero-badge" style="border-radius:0.75rem;padding:0.625rem 0.875rem;background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:0.5rem;transform:translateY(0);opacity:0;animation:badgeIn 0.6s ease 0.3s forwards;">
+                    <div style="width:2rem;height:2rem;border-radius:0.5rem;background:linear-gradient(135deg,#60a5fa,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);"><i class="fas fa-qrcode" style="color:white;font-size:0.75rem;"></i></div>
+                    <div><p style="color:white;font-weight:600;font-size:0.75rem;line-height:1.15;">QR</p><p style="color:rgba(255,255,255,0.5);font-size:0.625rem;">Trazabilidad</p></div>
+                  </div>
+                  <div class="hero-badge" style="border-radius:0.75rem;padding:0.625rem 0.875rem;background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;gap:0.5rem;transform:translateY(0);opacity:0;animation:badgeIn 0.6s ease 0.45s forwards;">
+                    <div style="width:2rem;height:2rem;border-radius:0.5rem;background:linear-gradient(135deg,#34d399,#0d9488);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.2);"><i class="fas fa-coins" style="color:white;font-size:0.75rem;"></i></div>
+                    <div><p style="color:white;font-weight:600;font-size:0.75rem;line-height:1.15;">S/</p><p style="color:rgba(255,255,255,0.5);font-size:0.625rem;">Finanzas</p></div>
+                  </div>
                 </div>
-                <div style="border-radius:1rem;padding:1.5rem;text-align:center;background:rgba(255,255,255,0.1);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1);">
-                  <div style="width:3rem;height:3rem;border-radius:0.75rem;background:linear-gradient(135deg,#f59e0b,#ea580c);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;box-shadow:0 4px 12px rgba(0,0,0,0.2);"><i class="fas fa-satellite-dish" style="color:white;font-size:1.125rem;"></i></div>
-                  <p style="color:white;font-weight:600;font-size:0.875rem;">IoT</p>
-                  <p style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin-top:0.125rem;">Tiempo real</p>
-                </div>
-                <div style="border-radius:1rem;padding:1.5rem;text-align:center;background:rgba(255,255,255,0.1);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1);">
-                  <div style="width:3rem;height:3rem;border-radius:0.75rem;background:linear-gradient(135deg,#60a5fa,#2563eb);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;box-shadow:0 4px 12px rgba(0,0,0,0.2);"><i class="fas fa-qrcode" style="color:white;font-size:1.125rem;"></i></div>
-                  <p style="color:white;font-weight:600;font-size:0.875rem;">QR</p>
-                  <p style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin-top:0.125rem;">Trazabilidad</p>
-                </div>
-                <div style="border-radius:1rem;padding:1.5rem;text-align:center;background:rgba(255,255,255,0.1);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1);">
-                  <div style="width:3rem;height:3rem;border-radius:0.75rem;background:linear-gradient(135deg,#34d399,#0d9488);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;box-shadow:0 4px 12px rgba(0,0,0,0.2);"><i class="fas fa-coins" style="color:white;font-size:1.125rem;"></i></div>
-                  <p style="color:white;font-weight:600;font-size:0.875rem;">S/</p>
-                  <p style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin-top:0.125rem;">Finanzas</p>
-                </div>
-              </div>
-              <div style="margin-top:1rem;border-radius:0.75rem;padding:1rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.05);">
-                <div style="display:flex;align-items:center;gap:0.75rem;"><div style="width:0.5rem;height:0.5rem;border-radius:50%;background:#4ade80;"></div><p style="font-size:0.875rem;color:rgba(255,255,255,0.6);">Sincronizado con Google Sheets</p></div>
-                <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.5rem;"><div style="width:0.5rem;height:0.5rem;border-radius:50%;background:#4ade80;"></div><p style="font-size:0.875rem;color:rgba(255,255,255,0.6);">Codigo abierto &middot; Sin mensualidades</p></div>
               </div>
             </div>
           </div>
@@ -406,6 +423,23 @@ if (session) return Astro.redirect('/dashboard');
   /* --- HERO --- */
   .hero-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: orbFloat 8s ease-in-out infinite; }
   @keyframes orbFloat { 0%,100% { transform: translateY(0) scale(1); } 33% { transform: translateY(-30px) scale(1.05); } 66% { transform: translateY(15px) scale(0.95); } }
+
+  .hero-particle { position:absolute;border-radius:50%;opacity:0.5;animation:particleFloat 6s ease-in-out infinite;pointer-events:none; }
+  @keyframes particleFloat { 0%,100% { transform:translateY(0) translateX(0);opacity:0.3; } 25% { transform:translateY(-20px) translateX(10px);opacity:0.7; } 50% { transform:translateY(-10px) translateX(-5px);opacity:0.5; } 75% { transform:translateY(-30px) translateX(8px);opacity:0.8; } }
+
+  .hero-pattern { animation:patternDrift 30s linear infinite; }
+  @keyframes patternDrift { 0% { transform:translateX(0) translateY(0); } 100% { transform:translateX(-40px) translateY(-20px); } }
+
+  .hero-image-frame { animation:imageReveal 0.8s ease-out forwards;opacity:0; }
+  @keyframes imageReveal { 0% { opacity:0;transform:scale(0.92) translateY(20px); } 100% { opacity:1;transform:scale(1) translateY(0); } }
+  .hero-image-frame:hover { animation:float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform:translateY(0px); } 50% { transform:translateY(-8px); } }
+
+  .hero-ring { animation:ringSpin 6s linear infinite; }
+  @keyframes ringSpin { 0% { transform:rotate(0deg) scale(1); } 100% { transform:rotate(360deg) scale(1); } }
+
+  .hero-badge { animation:badgeIn 0.6s ease forwards; }
+  @keyframes badgeIn { 0% { opacity:0;transform:translateY(12px); } 100% { opacity:1;transform:translateY(0); } }
 
   .scroll-animate { opacity: 0; transform: translateY(32px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
   .scroll-animate.visible { opacity: 1; transform: translateY(0); }
